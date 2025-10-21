@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Acompanhante {
+  idAcompanhante    Int                 @id @default(autoincrement()) @db.UnsignedInt
+  nomeCompleto      String?             @db.VarChar(255)
+  endereco          String?             @db.VarChar(255)
+  telefone          String?             @db.VarChar(11)
+  email             String?             @db.VarChar(255)
+  SolicitacaoViagem SolicitacaoViagem[]
+}
+
+model Carro {
+  idCarro                   Int         @id @default(autoincrement()) @db.UnsignedInt
+  StatusCarro_idStatusCarro Int         @db.UnsignedInt
+  TipoCarro_idTipoCarro     Int         @db.UnsignedInt
+  modelo                    String?     @db.VarChar(255)
+  cor                       String?     @db.VarChar(255)
+  placa                     String?     @db.VarChar(255)
+  capacidade                Int?        @db.UnsignedInt
+  StatusCarro               StatusCarro @relation(fields: [StatusCarro_idStatusCarro], references: [idStatusCarro], onUpdate: Restrict, map: "fk_Carro_StatusCarro")
+  TipoCarro                 TipoCarro   @relation(fields: [TipoCarro_idTipoCarro], references: [idTipoCarro], onUpdate: Restrict, map: "fk_Carro_TipoCarro")
+  Viagem                    Viagem[]
+
+  @@index([StatusCarro_idStatusCarro], map: "fk_Carro_StatusCarro")
+  @@index([TipoCarro_idTipoCarro], map: "fk_Carro_TipoCarro")
+}
+
+model CategoriaMensagemOuvidoria {
+  idCategoriaMensagemOuvidoria Int                 @id @default(autoincrement()) @db.UnsignedInt
+  nome                         String?             @db.VarChar(45)
+  MensagemOuvidoria            MensagemOuvidoria[]
+}
+
+model Data_Tabela {
+  idData_Evento         Int                     @id @default(autoincrement()) @db.UnsignedInt
+  data_evento           DateTime                @db.DateTime(0)
+  Dias_Trabalho_Taxista Dias_Trabalho_Taxista[]
+  Evento_Data           Evento_Data[]
+}
+
+model Dias_Trabalho_Taxista {
+  Data_Tabela_idData_Evento Int         @db.UnsignedInt
+  Taxista_idTaxista         Int         @db.UnsignedInt
+  Data_Tabela               Data_Tabela @relation(fields: [Data_Tabela_idData_Evento], references: [idData_Evento], onUpdate: Restrict, map: "fk_DiasTrabalho_Data")
+  Taxista                   Taxista     @relation(fields: [Taxista_idTaxista], references: [idTaxista], onUpdate: Restrict, map: "fk_DiasTrabalho_Taxista")
+
+  @@id([Data_Tabela_idData_Evento, Taxista_idTaxista])
+  @@index([Taxista_idTaxista], map: "fk_DiasTrabalho_Taxista")
+}
+
+model Evento {
+  idEvento          Int           @id @default(autoincrement()) @db.UnsignedInt
+  titulo            String        @db.VarChar(255)
+  descricao         String        @db.VarChar(255)
+  local_evento      String?       @db.VarChar(255)
+  setor_responsavel String?       @db.VarChar(255)
+  categoria         Int?          @db.UnsignedInt
+  imagem_url        String?       @db.VarChar(255)
+  Evento_Data       Evento_Data[]
+}
+
+model Evento_Data {
+  Evento_idEvento           Int         @db.UnsignedInt
+  Data_Tabela_idData_Evento Int         @db.UnsignedInt
+  Data_Tabela               Data_Tabela @relation(fields: [Data_Tabela_idData_Evento], references: [idData_Evento], onUpdate: Restrict, map: "fk_Evento_Data_Data")
+  Evento                    Evento      @relation(fields: [Evento_idEvento], references: [idEvento], onUpdate: Restrict, map: "fk_Evento_Data_Evento")
+
+  @@id([Evento_idEvento, Data_Tabela_idData_Evento])
+  @@index([Data_Tabela_idData_Evento], map: "fk_Evento_Data_Data")
+}
+
+model Funcao {
+  idFuncao          Int                 @id @default(autoincrement()) @db.UnsignedInt
+  nome              String?             @db.VarChar(255)
+  FuncionarioFuncao FuncionarioFuncao[]
+}
+
+model Funcionario {
+  idFuncionario     Int                 @id @default(autoincrement()) @db.UnsignedInt
+  Usuario_idUsuario Int                 @db.UnsignedInt
+  pis               Int?                @db.UnsignedInt
+  matricula         Int?                @db.UnsignedInt
+  Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onUpdate: Restrict, map: "fk_Funcionario_Usuario")
+  FuncionarioFuncao FuncionarioFuncao[]
+  Viagem            Viagem[]
+
+  @@index([Usuario_idUsuario], map: "fk_Funcionario_Usuario")
+}
+
+model FuncionarioFuncao {
+  Funcionario_idFuncionario Int         @db.UnsignedInt
+  Funcao_idFuncao           Int         @db.UnsignedInt
+  Funcao                    Funcao      @relation(fields: [Funcao_idFuncao], references: [idFuncao], onUpdate: Restrict, map: "fk_FuncionarioFuncao_Funcao")
+  Funcionario               Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onUpdate: Restrict, map: "fk_FuncionarioFuncao_Funcionario")
+
+  @@id([Funcionario_idFuncionario, Funcao_idFuncao])
+  @@index([Funcao_idFuncao], map: "fk_FuncionarioFuncao_Funcao")
+}
+
+model MensagemOuvidoria {
+  idMensagemOuvidoria                                     Int                        @id @default(autoincrement()) @db.UnsignedInt
+  Usuario_idUsuario                                       Int                        @db.UnsignedInt
+  CategoriaMensagemOuvidoria_idCategoriaMensagemOuvidoria Int                        @db.UnsignedInt
+  assunto                                                 String?                    @db.VarChar(255)
+  mensagem                                                String?                    @db.VarChar(255)
+  nomeSolicitante                                         String?                    @db.VarChar(255)
+  emailSolicitante                                        String?                    @db.VarChar(255)
+  numeroProtocolo                                         String?                    @db.Char(15)
+  status_2                                                String?                    @db.VarChar(255)
+  CategoriaMensagemOuvidoria                              CategoriaMensagemOuvidoria @relation(fields: [CategoriaMensagemOuvidoria_idCategoriaMensagemOuvidoria], references: [idCategoriaMensagemOuvidoria], onUpdate: Restrict, map: "fk_MensagemOuvidoria_Categoria")
+  Usuario                                                 Usuario                    @relation(fields: [Usuario_idUsuario], references: [idUsuario], onUpdate: Restrict, map: "fk_MensagemOuvidoria_Usuario")
+
+  @@index([CategoriaMensagemOuvidoria_idCategoriaMensagemOuvidoria], map: "fk_MensagemOuvidoria_Categoria")
+  @@index([Usuario_idUsuario], map: "fk_MensagemOuvidoria_Usuario")
+}
+
+model Parada {
+  idParada                              Int               @id @default(autoincrement()) @db.UnsignedInt
+  SolicitacaoViagem_idSolicitacaoViagem Int               @db.UnsignedInt
+  Viagem_idViagem                       Int               @db.UnsignedInt
+  endereco                              String?           @db.VarChar(255)
+  SolicitacaoViagem                     SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onUpdate: Restrict, map: "fk_Parada_Solicitacao")
+  Viagem                                Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem], onUpdate: Restrict, map: "fk_Parada_Viagem")
+
+  @@index([SolicitacaoViagem_idSolicitacaoViagem], map: "fk_Parada_Solicitacao")
+  @@index([Viagem_idViagem], map: "fk_Parada_Viagem")
+}
+
+model SolicitacaoViagem {
+  idSolicitacaoViagem              Int               @id @default(autoincrement()) @db.UnsignedInt
+  Acompanhante_idAcompanhante      Int               @db.UnsignedInt
+  StatusSolicitacao_idStatusViagem Int               @db.UnsignedInt
+  Viagem_idViagem                  Int               @db.UnsignedInt
+  Usuario_idUsuario                Int               @db.UnsignedInt
+  primeiro_nome_paciente           String            @db.VarChar(255)
+  sobrenome_paciente               String            @db.VarChar(255)
+  email_paciente                   String            @db.VarChar(255)
+  telefone_paciente                String            @db.VarChar(255)
+  endereco_paciente                String            @db.VarChar(255)
+  local_consulta                   String            @db.VarChar(255)
+  endereco_local                   String            @db.VarChar(255)
+  comprovante_url                  String            @db.VarChar(255)
+  data_consulta                    DateTime          @db.Date
+  horario_consulta                 DateTime          @db.Date
+  Parada                           Parada[]
+  Acompanhante                     Acompanhante      @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Acompanhante")
+  StatusSolicitacao                StatusSolicitacao @relation(fields: [StatusSolicitacao_idStatusViagem], references: [idStatusViagem], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Status")
+  Usuario                          Usuario           @relation(fields: [Usuario_idUsuario], references: [idUsuario], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Usuario")
+  Viagem                           Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Viagem")
+
+  @@index([Acompanhante_idAcompanhante], map: "fk_SolicitacaoViagem_Acompanhante")
+  @@index([StatusSolicitacao_idStatusViagem], map: "fk_SolicitacaoViagem_Status")
+  @@index([Usuario_idUsuario], map: "fk_SolicitacaoViagem_Usuario")
+  @@index([Viagem_idViagem], map: "fk_SolicitacaoViagem_Viagem")
+}
+
+model StatusCarro {
+  idStatusCarro Int     @id @default(autoincrement()) @db.UnsignedInt
+  statusCarro   String? @db.VarChar(255)
+  Carro         Carro[]
+}
+
+model StatusSolicitacao {
+  idStatusViagem    Int                 @id @default(autoincrement()) @db.UnsignedInt
+  statusViagem      String?             @db.VarChar(255)
+  SolicitacaoViagem SolicitacaoViagem[]
+}
+
+model Taxista {
+  idTaxista             Int                     @id @default(autoincrement()) @db.UnsignedInt
+  nome                  String?                 @db.VarChar(255)
+  telefone              String?                 @db.Char(11)
+  Dias_Trabalho_Taxista Dias_Trabalho_Taxista[]
+}
+
+model TipoCarro {
+  idTipoCarro Int     @id @default(autoincrement()) @db.UnsignedInt
+  nome        String? @db.VarChar(255)
+  Carro       Carro[]
+}
+
+model Usuario {
+  idUsuario          Int                 @id @default(autoincrement()) @db.UnsignedInt
+  primeiroNome       String              @db.VarChar(255)
+  ultimoNome         String              @db.VarChar(255)
+  cpf                String              @db.Char(11)
+  telefone           String              @db.Char(11)
+  email              String              @db.VarChar(255)
+  senha              String              @db.VarChar(255)
+  endereco           String              @db.VarChar(255)
+  telefoneConfirmado Boolean?            @default(false)
+  Funcionario        Funcionario[]
+  MensagemOuvidoria  MensagemOuvidoria[]
+  SolicitacaoViagem  SolicitacaoViagem[]
+}
+
+model Viagem {
+  idViagem                  Int                 @id @default(autoincrement()) @db.UnsignedInt
+  Funcionario_idFuncionario Int                 @db.UnsignedInt
+  Carro_idCarro             Int                 @db.UnsignedInt
+  dataPartida               DateTime?           @db.DateTime(0)
+  Parada                    Parada[]
+  SolicitacaoViagem         SolicitacaoViagem[]
+  Carro                     Carro               @relation(fields: [Carro_idCarro], references: [idCarro], onUpdate: Restrict, map: "fk_Viagem_Carro")
+  Funcionario               Funcionario         @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onUpdate: Restrict, map: "fk_Viagem_Funcionario")
+
+  @@index([Carro_idCarro], map: "fk_Viagem_Carro")
+  @@index([Funcionario_idFuncionario], map: "fk_Viagem_Funcionario")
+}
