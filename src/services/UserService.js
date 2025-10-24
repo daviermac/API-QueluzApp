@@ -1,8 +1,8 @@
-import prisma from '../config/prisma'
+import prisma from '../config/prisma.js'
 import bcrypt from 'bcrypt'
 
-export async function createUser(primeiroNome, ultimoNome, cpf, telefone, email, senha, endereco) {
-    if (!primeiroNome, !ultimoNome, !cpf, !telefone, !email, !senha, !endereco) {
+export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, senha, endereco) {
+    if (!primeiroNome, !sobrenome, !cpf, !telefone, !email, !senha, !endereco) {
         throw new Error("Erro: Todos os campos são obrigatórios!")
     }
 
@@ -23,7 +23,7 @@ export async function createUser(primeiroNome, ultimoNome, cpf, telefone, email,
     const user = await prisma.usuario.create({
         data: {
             primeiroNome, 
-            ultimoNome, 
+            sobrenome, 
             cpf, 
             telefone, 
             email, 
@@ -32,11 +32,13 @@ export async function createUser(primeiroNome, ultimoNome, cpf, telefone, email,
         }
     })
 
+    console.log(user)
+
     return user
 }
 
 export async function updateUser(idUsuario, primeiroNome, ultimoNome, cpf, telefone, email, senha, endereco) {
-
+    
 }
 
 export async function deleteUser(idUsuario) {

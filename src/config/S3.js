@@ -9,7 +9,7 @@ export async function getSignedDownloadUrl(path) {
     return await getSignedUrl(s3Client, command, { expiresIn: 60 })
 }
 
-export async function getSignedDownloadUrl(path) {
+export async function getSignedUploadUrl(path) {
     const command = new PutObjectCommand({ Bucket: bucket, Key: path });
     return await getSignedUrl(s3Client, command, { expiresIn: 600 })
 }

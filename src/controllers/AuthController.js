@@ -1,9 +1,5 @@
 import express from 'express'
-import prisma from '../config/prisma'
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcrypt'
-
-import * as AuthService from '../services/AuthService'
+import * as AuthService from '../services/AuthService.js'
 
 const router = express.Router()
 
@@ -15,14 +11,14 @@ router.post("/login", async (req, res) => {
         return res.json({
             error: false,
             message: "Login realizado com sucesso!",
-            user,
+            usuario: user,
             token
         })
     } catch (error) {
         console.error("Erro ao realizar autenticação", error.message)
         res.status(401).json({
             error: true,
-            message: `Erro ao realizar autenticação: ${error.message}`
+            message: error.message
         })
     }
 })

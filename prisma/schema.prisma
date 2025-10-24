@@ -136,9 +136,9 @@ model Parada {
 
 model SolicitacaoViagem {
   idSolicitacaoViagem              Int               @id @default(autoincrement()) @db.UnsignedInt
-  Acompanhante_idAcompanhante      Int               @db.UnsignedInt
+  Acompanhante_idAcompanhante      Int?               @db.UnsignedInt
   StatusSolicitacao_idStatusViagem Int               @db.UnsignedInt
-  Viagem_idViagem                  Int               @db.UnsignedInt
+  Viagem_idViagem                  Int?               @db.UnsignedInt
   Usuario_idUsuario                Int               @db.UnsignedInt
   primeiro_nome_paciente           String            @db.VarChar(255)
   sobrenome_paciente               String            @db.VarChar(255)
@@ -149,12 +149,12 @@ model SolicitacaoViagem {
   endereco_local                   String            @db.VarChar(255)
   comprovante_url                  String            @db.VarChar(255)
   data_consulta                    DateTime          @db.Date
-  horario_consulta                 DateTime          @db.Date
+  horario_consulta                 String         
   Parada                           Parada[]
-  Acompanhante                     Acompanhante      @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Acompanhante")
+  Acompanhante                     Acompanhante?      @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Acompanhante")
   StatusSolicitacao                StatusSolicitacao @relation(fields: [StatusSolicitacao_idStatusViagem], references: [idStatusViagem], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Status")
   Usuario                          Usuario           @relation(fields: [Usuario_idUsuario], references: [idUsuario], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Usuario")
-  Viagem                           Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Viagem")
+  Viagem                           Viagem?            @relation(fields: [Viagem_idViagem], references: [idViagem], onUpdate: Restrict, map: "fk_SolicitacaoViagem_Viagem")
 
   @@index([Acompanhante_idAcompanhante], map: "fk_SolicitacaoViagem_Acompanhante")
   @@index([StatusSolicitacao_idStatusViagem], map: "fk_SolicitacaoViagem_Status")
@@ -190,10 +190,10 @@ model TipoCarro {
 model Usuario {
   idUsuario          Int                 @id @default(autoincrement()) @db.UnsignedInt
   primeiroNome       String              @db.VarChar(255)
-  ultimoNome         String              @db.VarChar(255)
-  cpf                String              @db.Char(11)
+  sobrenome         String              @db.VarChar(255)
+  cpf                String              @db.Char(11) @unique
   telefone           String              @db.Char(11)
-  email              String              @db.VarChar(255)
+  email              String              @db.VarChar(255) @unique
   senha              String              @db.VarChar(255)
   endereco           String              @db.VarChar(255)
   telefoneConfirmado Boolean?            @default(false)
