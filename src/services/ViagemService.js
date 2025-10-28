@@ -1,6 +1,38 @@
 import prisma from "../config/prisma.js";
-
 import parseDateBR from "../helpers/parseDateBR.js";
+
+export async function listRequests() {
+  const requests = await prisma.solicitacaoViagem.findMany({
+    include: {
+      Usuario: true,
+      Acompanhante: true
+    }
+  })
+
+  if (!requests) {
+    throw new Error("Erro: nenhuma requisição encontrada para este usuário!")
+  }
+
+  return requests
+}
+
+export async function listRequestsByUser(userId) {
+  if (!userId) {
+    throw new Error("Erro: O Id do usuário é obrigatório!");
+  }
+  
+  const requestsByUser = await prisma.solicitacaoViagem.findMany({
+    where: {
+      Usuario_idUsuario: userId
+    }
+  })
+
+  if (!requestsByUser) {
+    throw new Error("Erro: nenhuma requisição encontrada para este usuário!")
+  }
+
+  return requestsByUser
+}
 
 export async function requestViagem(
   idUsuario,

@@ -19,8 +19,9 @@ model Acompanhante {
 
 model Carro {
   idCarro                   Int         @id @default(autoincrement()) @db.UnsignedInt
-  StatusCarro_idStatusCarro Int         @db.UnsignedInt
+  StatusCarro_idStatusCarro Int         @db.UnsignedInt @default(1)
   TipoCarro_idTipoCarro     Int         @db.UnsignedInt
+  marca                    String?     @db.VarChar(255)
   modelo                    String?     @db.VarChar(255)
   cor                       String?     @db.VarChar(255)
   placa                     String?     @db.VarChar(255)

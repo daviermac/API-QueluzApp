@@ -19,11 +19,13 @@ app.use((req, res, next) => {
 import AuthController from './src/controllers/AuthController.js'
 import UserController from './src/controllers/UserController.js'
 import ViagemController from './src/controllers/ViagemController.js'
+import CarController from './src/controllers/CarController.js'
 
 app.get("/", (req, res) => res.json({ mensagem: "API QueluzApp 2.0" }))
 app.use("/auth", AuthController)
 app.use("/user", UserController)
 app.use("/viagem", ViagemController)
+app.use("/car", CarController)
 
 // Server instance
 
