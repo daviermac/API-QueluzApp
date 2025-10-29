@@ -4,7 +4,7 @@ import { getSignedUploadUrl } from '../config/S3.js'
 
 const router = express.Router()
 
-router.get("/getAll", async (req, res) => {
+router.get("/getAllRequests", async (req, res) => {
     try {
         const requests = await ViagemService.listRequests()
 
@@ -20,10 +20,9 @@ router.get("/getAll", async (req, res) => {
             message: `Erro ao listar requisições: ${error.message}`
         })
     }
-    
 })
 
-router.get("/getByUser/:id", async (req, res) => {
+router.get("/getRequestsByUser/:id", async (req, res) => {
     const { id } = req.params
 
     try {
@@ -63,8 +62,6 @@ router.post("/generate-url", async (req, res) => {
 })
 
 router.post("/request", async (req, res) => {
-    const body = req.body
-
     try {
         const { 
             idUsuario, first_name, surname, email, cellphone, address, local, local_address, 
@@ -90,8 +87,10 @@ router.post("/request", async (req, res) => {
     }
 })
 
-router.post("/create-trip", async (req, res) => {
-    const { requestId, carId } = req.body
+router.post("/create", async (req, res) => {
+    const { idCarro, idFuncionario, idsSolicitacoes, dataPartida, horaPartida } = req.body
+
+
 })
 
 export default router

@@ -99,3 +99,7 @@ export async function requestViagem(
 
   return viagem;
 }
+
+export async function createViagem() {
+    
+}
