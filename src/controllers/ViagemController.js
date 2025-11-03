@@ -69,6 +69,7 @@ router.post("/request", async (req, res) => {
             companion_address 
         } = req.body
 
+
         const viagem = await ViagemService.requestViagem(idUsuario, first_name, surname, email, cellphone, address, local, local_address, 
             comprovante, data, hora, companion_name, companion_phone, companion_email, 
             companion_address)

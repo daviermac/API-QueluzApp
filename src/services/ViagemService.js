@@ -1,13 +1,8 @@
-import prisma from "../config/prisma.js";
+import * as ViagemRepositories from '../repositories/ViagemRepositories.js'
 import parseDateBR from "../helpers/parseDateBR.js";
 
 export async function listRequests() {
-  const requests = await prisma.solicitacaoViagem.findMany({
-    include: {
-      Usuario: true,
-      Acompanhante: true
-    }
-  })
+  const requests = ViagemRepositories.getAllRequests()
 
   if (!requests) {
     throw new Error("Erro: nenhuma requisição encontrada para este usuário!")
@@ -67,6 +62,15 @@ export async function requestViagem(
     })
   }
 
+  let soliticacao = await prisma.solicitacao.create({
+    data: {
+      primeiro_nome_solicitante: first_name,
+      sobrenome_solicitante: surname,
+      email_solicitante: email,
+      telefone_solicitante: cellphone
+    }
+  })
+
   const viagemData = {
     Usuario: {
       connect: { idUsuario }
@@ -74,6 +78,9 @@ export async function requestViagem(
     StatusSolicitacao: {
       connect: { idStatusViagem: 1 }
     },      
+    Solicitacao: {
+      connect: { id }
+    },
     
     primeiro_nome_paciente: first_name,
     sobrenome_paciente: surname,
