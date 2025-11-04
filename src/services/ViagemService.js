@@ -9,27 +9,12 @@ export async function listRequestsByUser(userId) {
   
 }
 
-export async function requestViagem(
-  idUsuario,
-  first_name,
-  surname,
-  email,
-  cellphone,
-  address,
-  local,
-  local_address,
-  comprovante,
-  data,
-  hora,
-  companion_name,
-  companion_phone,
-  companion_email,
-  companion_address
-) {
+export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_address, comprovante, data, hora, companion_name, companion_phone, companion_email, companion_address ) {
   if (!first_name || !surname || !email || !cellphone || !address || !local || !local_address || !comprovante || !data || !hora) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
   } 
 
+  // Criação do acompanhante
   let acompanhante
   if (companion_name) {
     acompanhante = await prisma.acompanhante.create({
@@ -42,27 +27,34 @@ export async function requestViagem(
     })
   }
 
-
-  let soliticacao = await prisma.solicitacao.create({
-    data: {
-      primeiro_nome_solicitante: first_name,
-      sobrenome_solicitante: surname,
-      email_solicitante: email,
-      telefone_solicitante: cellphone
+  // Criação de uma solicitação
+  const tipoSolicitacaoViagem = await prisma.tipoSolicitacao.findFirst({
+    where: {
+      tipoSolicitacao: 'VIAGEM'
     }
   })
 
+  let soliticacao = await prisma.solicitacao.create({
+    data: {
+      Usuario_idUsuario: idUsuario,
+      tipo_solicitacao: tipoSolicitacaoViagem.idTipoSolicitacao,
+      primeiro_nome_solicitante: first_name,
+      sobrenome_solicitante: surname,
+      email_solicitante: email,
+      telefone_solicitante: cellphone,
+    }
+  })
+
+  // Criação da solicitação da viagem
+  const statusPendente = await prisma.statusSolicitacaoViagem.findFirst({ where: { statusViagem: 'PENDENTE' }})
+
   const viagemData = {
     Usuario: {
-      connect: { idUsuario }
+      connect: { idUsuario }  
     },
-    StatusSolicitacao: {
-      connect: { idStatusViagem: 1 }
-    },      
-    Solicitacao: {
-      connect: { id }
+    statusViagem: {
+      connect: { idStatusViagem: statusPendente.idStatusViagem}
     },
-    
     primeiro_nome_paciente: first_name,
     sobrenome_paciente: surname,
     email_paciente: email,

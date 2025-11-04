@@ -166,7 +166,6 @@ model Solicitacao {
   sobrenome_solicitante             String              @db.VarChar(255)
   email_solicitante                 String              @db.VarChar(255)
   telefone_solicitante              String              @db.VarChar(15)
-  tipo_solicitacao                  String              @db.VarChar(255)
   MensagemOuvidoria                 MensagemOuvidoria[]
   PedidoConsulta                    PedidoConsulta[]
   TipoSolicitacao                   TipoSolicitacao     @relation(fields: [TipoSolicitacao_idTipoSolicitacao], references: [idTipoSolicitacao], onDelete: NoAction, onUpdate: NoAction, map: "fk_solicitacao_tipo")
@@ -181,7 +180,7 @@ model SolicitacaoViagem {
   idSolicitacaoViagem              Int               @id @default(autoincrement())
   Solicitacao_idSolicitacao        Int
   Acompanhante_idAcompanhante      Int?
-  StatusSolicitacao_idStatusViagem Int
+  StatusSolicitacaoViagem_idStatusViagem Int
   Viagem_idViagem                  Int
   endereco_paciente                String            @db.VarChar(255)
   local_consulta                   String            @db.VarChar(255)
@@ -192,12 +191,12 @@ model SolicitacaoViagem {
   Parada                           Parada[]
   Acompanhante                     Acompanhante?     @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onUpdate: NoAction, map: "fk_solviagem_acomp")
   Solicitacao                      Solicitacao       @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_solviagem_solicitacao")
-  StatusSolicitacao                StatusSolicitacao @relation(fields: [StatusSolicitacao_idStatusViagem], references: [idStatusViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_status")
+  StatusSolicitacao                StatusSolicitacaoViagem @relation(fields: [StatusSolicitacaoViagem_idStatusViagem], references: [idStatusViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_status")
   Viagem                           Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_viagem")
 
   @@index([Acompanhante_idAcompanhante], map: "fk_solviagem_acomp")
   @@index([Solicitacao_idSolicitacao], map: "fk_solviagem_solicitacao")
-  @@index([StatusSolicitacao_idStatusViagem], map: "fk_solviagem_status")
+  @@index([StatusSolicitacaoViagem_idStatusViagem], map: "fk_solviagem_status")
   @@index([Viagem_idViagem], map: "fk_solviagem_viagem")
 }
 
@@ -207,7 +206,7 @@ model StatusCarro {
   Carro         Carro[]
 }
 
-model StatusSolicitacao {
+model StatusSolicitacaoViagem {
   idStatusViagem    Int                            @id @default(autoincrement())
   statusViagem      StatusSolicitacao_statusViagem
   SolicitacaoViagem SolicitacaoViagem[]

@@ -1,5 +1,6 @@
 import express from 'express'
 import { config } from 'dotenv'
+import OS from 'os'
 
 const app = express()
 config()
@@ -32,5 +33,6 @@ app.use("/car", CarController)
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`)
+    const networkInterfaces = OS.networkInterfaces()
+    console.log(`Servidor rodando em http://${networkInterfaces.Ethernet[1].address}:${PORT}`)
 })

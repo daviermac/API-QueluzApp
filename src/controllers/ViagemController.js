@@ -74,6 +74,8 @@ router.post("/request", async (req, res) => {
             comprovante, data, hora, companion_name, companion_phone, companion_email, 
             companion_address)
 
+        console.log(viagem)
+        
         return res.json({
             error: false,
             message: 'Viagem solicitada com sucesso!',

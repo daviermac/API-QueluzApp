@@ -10,7 +10,7 @@ async function main() {
     skipDuplicates: true,
   })
 
-  await prisma.statusSolicitacao.createMany({
+  await prisma.statusSolicitacaoViagem.createMany({
     data: [
       { statusViagem: 'PENDENTE' },
       { statusViagem: 'CONFIRMADA' },
