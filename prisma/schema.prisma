@@ -181,7 +181,7 @@ model SolicitacaoViagem {
   Solicitacao_idSolicitacao        Int
   Acompanhante_idAcompanhante      Int?
   StatusSolicitacaoViagem_idStatusViagem Int
-  Viagem_idViagem                  Int
+  Viagem_idViagem                  Int?
   endereco_paciente                String            @db.VarChar(255)
   local_consulta                   String            @db.VarChar(255)
   endereco_local                   String            @db.VarChar(255)
@@ -192,7 +192,7 @@ model SolicitacaoViagem {
   Acompanhante                     Acompanhante?     @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onUpdate: NoAction, map: "fk_solviagem_acomp")
   Solicitacao                      Solicitacao       @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_solviagem_solicitacao")
   StatusSolicitacao                StatusSolicitacaoViagem @relation(fields: [StatusSolicitacaoViagem_idStatusViagem], references: [idStatusViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_status")
-  Viagem                           Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_viagem")
+  Viagem                           Viagem?            @relation(fields: [Viagem_idViagem], references: [idViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_viagem")
 
   @@index([Acompanhante_idAcompanhante], map: "fk_solviagem_acomp")
   @@index([Solicitacao_idSolicitacao], map: "fk_solviagem_solicitacao")
@@ -241,10 +241,10 @@ model UnidadeUbs {
 model Usuario {
   idUsuario          Int           @id @default(autoincrement())
   primeiroNome       String        @db.VarChar(255)
-  ultimoNome         String        @db.VarChar(255)
-  cpf                String        @db.Char(11)
+  sobrenome         String        @db.VarChar(255)
+  cpf                String        @db.Char(11) @unique
   telefone           String        @db.Char(11)
-  email              String        @db.VarChar(255)
+  email              String        @db.VarChar(255) @unique
   senha              String        @db.VarChar(255)
   endereco           String        @db.VarChar(255)
   telefoneConfirmado Boolean       @default(false)

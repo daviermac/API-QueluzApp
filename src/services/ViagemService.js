@@ -1,5 +1,7 @@
 import prisma from "../config/prisma.js";
+
 import parseDateBR from "../helpers/parseDateBR.js";
+import parseHoraBR from "../helpers/parseHoraBR.js";
 
 export async function listRequests() {
   
@@ -36,8 +38,12 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
 
   let soliticacao = await prisma.solicitacao.create({
     data: {
-      Usuario_idUsuario: idUsuario,
-      tipo_solicitacao: tipoSolicitacaoViagem.idTipoSolicitacao,
+      Usuario: {
+        connect: { idUsuario }
+      },
+      TipoSolicitacao: {
+        connect: { idTipoSolicitacao: tipoSolicitacaoViagem.idTipoSolicitacao }
+      },
       primeiro_nome_solicitante: first_name,
       sobrenome_solicitante: surname,
       email_solicitante: email,
@@ -49,22 +55,18 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
   const statusPendente = await prisma.statusSolicitacaoViagem.findFirst({ where: { statusViagem: 'PENDENTE' }})
 
   const viagemData = {
-    Usuario: {
-      connect: { idUsuario }  
-    },
-    statusViagem: {
+    StatusSolicitacao: {
       connect: { idStatusViagem: statusPendente.idStatusViagem}
     },
-    primeiro_nome_paciente: first_name,
-    sobrenome_paciente: surname,
-    email_paciente: email,
-    telefone_paciente: cellphone,
+    Solicitacao: {
+      connect: { idSolicitacao: soliticacao.idSolicitacao }
+    },
     endereco_paciente: address,
     local_consulta: local,
     endereco_local: local_address,
     comprovante_url: comprovante,
     data_consulta:  parseDateBR(data),
-    horario_consulta: hora,
+    horario_consulta: parseHoraBR(hora),
   };
 
   if (acompanhante) {
