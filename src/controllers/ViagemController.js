@@ -4,9 +4,9 @@ import { getSignedUploadUrl } from '../config/S3.js'
 
 const router = express.Router()
 
-router.get("/getAllRequests", async (req, res) => {
+router.get("/get", async (req, res) => {
     try {
-        const requests = await ViagemService.listRequests()
+        const requests = await ViagemService.listViagemRequests()
 
         res.json({ 
             error: false,
@@ -22,13 +22,13 @@ router.get("/getAllRequests", async (req, res) => {
     }
 })
 
-router.get("/getRequestsByUser/:id", async (req, res) => {
-    const { id } = req.params
+router.get("/get/:idUsuario", async (req, res) => {
+    const { idUsuario } = req.params
 
     try {
-        const requests = await ViagemService.listRequestsByUser(Number(id))
+        const requests = await ViagemService.listViagemRequestsByUser(Number(idUsuario))
 
-        res.status(201).json({ 
+        res.status(200).json({ 
             error: false,
             message: "Solicitações listadas com sucesso!", 
             requests, 
@@ -73,7 +73,6 @@ router.post("/request", async (req, res) => {
             comprovante, data, hora, companion_name, companion_phone, companion_email, 
             companion_address)
 
-        
         return res.json({
             error: false,
             message: 'Viagem solicitada com sucesso!',
@@ -91,7 +90,7 @@ router.post("/request", async (req, res) => {
 router.post("/create", async (req, res) => {
     const { idCarro, idFuncionario, idsSolicitacoes, dataPartida, horaPartida } = req.body
 
-
+    
 })
 
 export default router

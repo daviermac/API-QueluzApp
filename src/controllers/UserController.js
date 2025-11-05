@@ -22,4 +22,44 @@ router.post("/create", async (req, res) => {
     }
 })
 
+router.put("/update/:idUsuario", async (req, res) => {
+    const { idUsuario } = req.params
+    try {
+        const { primeiroNome, sobrenome, cpf, telefone, email, endereco } = req.body
+        const updatedUser = await UserService.updateUser(Number(idUsuario), primeiroNome, sobrenome, cpf, telefone, email, endereco)
+        
+        return res.json({
+            error: false,
+            message: "Usuário atualizado com sucesso!",
+            usuario: updatedUser
+        })
+    } catch (error) {
+        console.error("Erro ao atualizar usuário!", error.message)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao atualizar usuário!: ${error.message}`
+        })
+    }
+})
+
+router.delete("/delete/:idUsuario", async (req, res) => {
+    const { idUsuario } = req.params
+
+    try {
+        const userDeleted = await UserService.deleteUser(Number(idUsuario))
+
+        return res.json({
+            error: false,
+            message: "Usuário deletado com sucesso!",
+            usuario: userDeleted
+        })
+    } catch (error) {
+        console.error("Erro ao deletar usuário!", error.message)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao deletar usuário!: ${error.message}`
+        })
+    }
+})
+
 export default router

@@ -3,12 +3,31 @@ import prisma from "../config/prisma.js";
 import parseDateBR from "../helpers/parseDateBR.js";
 import parseHoraBR from "../helpers/parseHoraBR.js";
 
-export async function listRequests() {
-  
+export async function listViagemRequests() {
+  const requests = await prisma.solicitacaoViagem.findMany({
+    include: {
+      Solicitacao: true,
+      StatusSolicitacao: true
+    }
+  })
+
+  return requests
 }
 
-export async function listRequestsByUser(userId) {
-  
+export async function listViagemRequestsByUser(userId) {
+  const requests = await prisma.solicitacaoViagem.findMany({
+    include: {
+      Solicitacao: true,
+      StatusSolicitacao: true
+    },
+    where: {
+      Solicitacao: {
+        Usuario_idUsuario: userId
+      }
+    }
+  })
+
+  return requests
 }
 
 export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_address, comprovante, data, hora, companion_name, companion_phone, companion_email, companion_address ) {
