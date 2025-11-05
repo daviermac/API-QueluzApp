@@ -26,12 +26,12 @@ router.get("/get/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
 
     try {
-        const requests = await ViagemService.listViagemRequestsByUser(Number(idUsuario))
+        const requestsWithSignedUrls = await ViagemService.listViagemRequestsByUser(Number(idUsuario))
 
         res.status(200).json({ 
             error: false,
             message: "Solicitações listadas com sucesso!", 
-            requests, 
+            requestsWithSignedUrls, 
         });
     } catch (error) {
         console.error(`Erro ao listar requisições: ${error.message}`)
@@ -43,14 +43,20 @@ router.get("/get/:idUsuario", async (req, res) => {
 }) 
 
 router.post("/generate-url", async (req, res) => {
-    const body = req.body
+    const { fileType, idUsuario } = req.body
 
     try {
-        const uploadUrl = await getSignedUploadUrl(body.comprovante)
+        const fileName = `${Date.now()}-${idUsuario}.jpg`
+        const fileKey = `comprovantes/${idUsuario}/${fileName}`
+
+        const uploadUrl = await getSignedUploadUrl(fileKey, fileType)
+        
+        const fileUrl = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${fileKey}`
+        
         res.status(201).json({ 
             error: false, 
             uploadUrl, 
-            body 
+            fileUrl 
         });
     } catch (error) {
         console.error(`Erro ao gerar url: ${error.message}`)

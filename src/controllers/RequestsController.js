@@ -7,12 +7,12 @@ router.get("/get/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
 
     try {
-        const requests = await RequestsService.listRequestsByUser(Number(idUsuario))
+        const requestsWithSignedUrls = await RequestsService.listRequestsByUser(Number(idUsuario))
 
         res.json({
             error: false,
             message: "Solicitações listadas com sucesso!",
-            requests
+            requestsWithSignedUrls
         })
     } catch (error) {
         console.error(`Erro ao listar requisições: ${error.message}`)

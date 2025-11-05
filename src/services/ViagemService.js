@@ -1,7 +1,10 @@
 import prisma from "../config/prisma.js";
+import path from 'path'
 
 import parseDateBR from "../helpers/parseDateBR.js";
 import parseHoraBR from "../helpers/parseHoraBR.js";
+
+import { getSignedDownloadUrl } from "../config/S3.js";
 
 export async function listViagemRequests() {
   const requests = await prisma.solicitacaoViagem.findMany({
@@ -11,7 +14,26 @@ export async function listViagemRequests() {
     }
   })
 
-  return requests
+  const requestsWithSignedUrls = await Promise.all(
+    requests.map(async (req) => {
+      if (req.comprovante_url) {
+        // remove o domínio e pega só o "key"
+        const fileKey = req.comprovante_url.replace(
+          /^https:\/\/[^/]+\/(.+)$/,
+          "$1"
+        );
+
+        const signedUrl = await getSignedDownloadUrl(fileKey, "image/jpeg");
+        return {
+          ...req,
+          link_comprovante_acessivel: signedUrl
+        };
+      }
+      return req;
+    })
+  );
+
+  return requestsWithSignedUrls;
 }
 
 export async function listViagemRequestsByUser(userId) {
@@ -27,7 +49,27 @@ export async function listViagemRequestsByUser(userId) {
     }
   })
 
-  return requests
+  // Aguarda gerar todas as URLs pré-assinadas
+  const requestsWithSignedUrls = await Promise.all(
+    requests.map(async (req) => {
+      if (req.comprovante_url) {
+        // remove o domínio e pega só o "key"
+        const fileKey = req.comprovante_url.replace(
+          /^https:\/\/[^/]+\/(.+)$/,
+          "$1"
+        );
+
+        const signedUrl = await getSignedDownloadUrl(fileKey, "image/jpeg");
+        return {
+          ...req,
+          link_comprovante_acessivel: signedUrl
+        };
+      }
+      return req;
+    })
+  );
+
+  return requestsWithSignedUrls;
 }
 
 export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_address, comprovante, data, hora, companion_name, companion_phone, companion_email, companion_address ) {
