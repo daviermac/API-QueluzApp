@@ -36,5 +36,5 @@ const PORT = process.env.PORT || 3000
 
 app.listen(PORT, () => {
     const networkInterfaces = OS.networkInterfaces()
-    console.log(`Servidor rodando em http://${networkInterfaces.Ethernet[1].address}:${PORT}`)
+    console.log(`Servidor rodando em http://localhost:${PORT}`)
 })
