@@ -53,7 +53,7 @@ export async function updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefo
 
     const userUpdated = await prisma.usuario.update({
         data: {
-            primeiroNome, sobrenome, cpf, telefone, email, senha, endereco
+            primeiroNome, sobrenome, cpf, telefone, email, endereco
         },
         where: {
             idUsuario
