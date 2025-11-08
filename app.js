@@ -1,6 +1,5 @@
 import express from 'express'
 import { config } from 'dotenv'
-import OS from 'os'
 
 const app = express()
 config()
@@ -35,6 +34,5 @@ app.use("/request", RequestsController)
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT, () => {
-    const networkInterfaces = OS.networkInterfaces()
     console.log(`Servidor rodando em http://localhost:${PORT}`)
 })
