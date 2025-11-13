@@ -10,7 +10,8 @@ export async function listViagemRequests() {
   const requests = await prisma.solicitacaoViagem.findMany({
     include: {
       Solicitacao: true,
-      StatusSolicitacao: true
+      StatusSolicitacao: true,
+      Acompanhante: true
     }
   })
 
@@ -40,7 +41,8 @@ export async function listViagemRequestsByUser(userId) {
   const requests = await prisma.solicitacaoViagem.findMany({
     include: {
       Solicitacao: true,
-      StatusSolicitacao: true
+      StatusSolicitacao: true,
+      Acompanhante: true
     },
     where: {
       Solicitacao: {

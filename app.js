@@ -1,5 +1,6 @@
 import express from 'express'
 import { config } from 'dotenv'
+import prisma from './src/config/prisma.js'
 
 const app = express()
 config()
@@ -33,6 +34,18 @@ app.use("/request", RequestsController)
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`)
-})
+async function startServer() {
+    try {
+        await prisma.$connect()
+        console.log("Banco de dados conectado com sucesso!")
+
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando em http://localhost:${PORT}`)
+        })
+    } catch (error) {
+        console.error("Erro ao conectar com o banco de dados:", error)
+        process.exit(1) // encerra o processo se não conseguir conectar
+    }
+}
+
+startServer()

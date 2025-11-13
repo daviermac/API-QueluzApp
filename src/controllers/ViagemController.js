@@ -4,7 +4,7 @@ import { getSignedUploadUrl } from '../config/S3.js'
 
 const router = express.Router()
 
-router.get("/get", async (req, res) => {
+router.get("/getRequests", async (req, res) => {
     try {
         const requests = await ViagemService.listViagemRequests()
 
@@ -22,7 +22,7 @@ router.get("/get", async (req, res) => {
     }
 })
 
-router.get("/get/:idUsuario", async (req, res) => {
+router.get("/getRequests/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
 
     try {
