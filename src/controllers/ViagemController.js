@@ -70,12 +70,12 @@ router.post("/generate-url", async (req, res) => {
 router.post("/request", async (req, res) => {
     try {
         const { 
-            idUsuario, first_name, surname, email, cellphone, address, local, local_address, 
+            idUsuario, first_name, surname, email, cellphone, address, local, local_city, 
             comprovante, data, hora, companion_name, companion_phone, companion_email, 
             companion_address 
         } = req.body
 
-        const viagem = await ViagemService.requestViagem(idUsuario, first_name, surname, email, cellphone, address, local, local_address, 
+        const viagem = await ViagemService.requestViagem(idUsuario, first_name, surname, email, cellphone, address, local, local_city, 
             comprovante, data, hora, companion_name, companion_phone, companion_email, 
             companion_address)
 

@@ -22,6 +22,7 @@ import UserController from './src/controllers/UserController.js'
 import ViagemController from './src/controllers/ViagemController.js'
 import CarController from './src/controllers/CarController.js'
 import RequestsController from './src/controllers/RequestsController.js'
+import FuncionarioController from './src/controllers/FuncionarioController.js'
 
 app.get("/", (req, res) => res.json({ mensagem: "API QueluzApp 2.0" }))
 app.use("/auth", AuthController)
@@ -29,6 +30,7 @@ app.use("/user", UserController)
 app.use("/viagem", ViagemController)
 app.use("/car", CarController)
 app.use("/request", RequestsController)
+app.use("/funcionario", FuncionarioController)
 
 // Server instance
 

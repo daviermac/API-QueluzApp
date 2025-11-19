@@ -184,7 +184,7 @@ model SolicitacaoViagem {
   Viagem_idViagem                  Int?
   endereco_paciente                String            @db.VarChar(255)
   local_consulta                   String            @db.VarChar(255)
-  endereco_local                   String            @db.VarChar(255)
+  cidade_consulta                  String            @db.VarChar(255)
   comprovante_url                  String?           @db.VarChar(255)
   data_consulta                    DateTime          @db.Date
   horario_consulta                 DateTime          @db.Time(0)
@@ -265,6 +265,22 @@ model Viagem {
 
   @@index([Carro_idCarro], map: "fk_viagem_carro")
   @@index([Funcionario_idFuncionario], map: "fk_viagem_funcionario")
+}
+
+model Categoria {
+  id       Int       @id @default(autoincrement())
+  nome     String
+  noticias Noticia[]
+}
+
+model Noticia {
+  id          Int      @id @default(autoincrement())
+  titulo      String
+  corpo       String
+  imagemUrl   String
+  categoriaId Int
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  createdAt   DateTime @default(now())
 }
 
 enum CategoriaMensagemOuvidoria_nome_categoria {

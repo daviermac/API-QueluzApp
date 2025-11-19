@@ -74,8 +74,8 @@ export async function listViagemRequestsByUser(userId) {
   return requestsWithSignedUrls;
 }
 
-export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_address, comprovante, data, hora, companion_name, companion_phone, companion_email, companion_address ) {
-  if (!first_name || !surname || !email || !cellphone || !address || !local || !local_address || !comprovante || !data || !hora) {
+export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_city, comprovante, data, hora, companion_name, companion_phone, companion_email, companion_address ) {
+  if (!first_name || !surname || !email || !cellphone || !address || !local || !local_city || !comprovante || !data || !hora) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
   } 
 
@@ -126,7 +126,7 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
     },
     endereco_paciente: address,
     local_consulta: local,
-    endereco_local: local_address,
+    cidade_consulta: local_city,
     comprovante_url: comprovante,
     data_consulta:  parseDateBR(data),
     horario_consulta: parseHoraBR(hora),
