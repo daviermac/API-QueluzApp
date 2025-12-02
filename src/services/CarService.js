@@ -5,9 +5,15 @@ export async function createCar(modelo, marca, cor, placa, capacidade, idTipoCar
         throw new Error("Todos os dados são obrigatórios!")
     }
 
+    const status = await prisma.statusCarro.findFirst({
+        where: {
+            statusCarro: 'DISPONIVEL'
+        }
+    })
+
     const car = await prisma.carro.create({
         data: {
-            StatusCarro_idStatusCarro: 7,
+            StatusCarro_idStatusCarro: status.idStatusCarro,
             TipoCarro_idTipoCarro: idTipoCarro,
             modelo,
             marca,

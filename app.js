@@ -1,9 +1,18 @@
 import express from 'express'
 import { config } from 'dotenv'
+import multer from 'multer'
 import prisma from './src/config/prisma.js'
 
 const app = express()
 config()
+
+// Configurar multer para armazenar na memória
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB
+    }
+})
 
 // Middlewares setting
 
@@ -23,6 +32,7 @@ import ViagemController from './src/controllers/ViagemController.js'
 import CarController from './src/controllers/CarController.js'
 import RequestsController from './src/controllers/RequestsController.js'
 import FuncionarioController from './src/controllers/FuncionarioController.js'
+import NewsController from './src/controllers/NewsController.js'
 
 app.get("/", (req, res) => res.json({ mensagem: "API QueluzApp 2.0" }))
 app.use("/auth", AuthController)
@@ -31,6 +41,7 @@ app.use("/viagem", ViagemController)
 app.use("/car", CarController)
 app.use("/request", RequestsController)
 app.use("/funcionario", FuncionarioController)
+app.use("/news", upload.single('image'), NewsController)
 
 // Server instance
 

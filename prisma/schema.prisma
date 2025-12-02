@@ -279,6 +279,7 @@ model Noticia {
   corpo       String
   imagemUrl   String
   categoriaId Int
+  autor       String
   categoria   Categoria @relation(fields: [categoriaId], references: [id])
   createdAt   DateTime @default(now())
 }
