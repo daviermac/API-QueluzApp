@@ -1,11 +1,23 @@
 import express from 'express'
+import upload from '../config/multer.js'
 import * as NewsService from '../services/NewsService.js'
 
 const router = express.Router()
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single("imagem-principal"), async (req, res) => {
     try {
         const { title, body, categoryId, author } = req.body
+
+        if (!req.file) {
+            return res.status(400).json({
+                error: true,
+                message: "Imagem é obrigatória"
+            })
+        }
+
+        const filePath = req.file.path
+        const fileName = req.file.filename
+        const contentType = req.file.mimetype
         
         if (!title || !body) {
             return res.status(400).json({
@@ -14,16 +26,12 @@ router.post("/", async (req, res) => {
             })
         }
         
-        const imageBuffer = req.file?.buffer
-        const imageFileName = req.file?.originalname
-        const contentType = req.file?.mimetype
-        
         const news = await NewsService.createNews(
             title, 
             body, 
-            imageBuffer, 
-            imageFileName, 
-            contentType, 
+            filePath,
+            fileName,
+            contentType,
             categoryId, 
             author
         )
@@ -41,6 +49,7 @@ router.post("/", async (req, res) => {
         })
     }
 })
+
 
 router.get("/", async (req, res) => {
     try {

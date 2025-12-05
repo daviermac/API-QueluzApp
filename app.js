@@ -23,6 +23,8 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type, Authorization")
     next();
 })
+app.use("/news", express.static("src/assets/news"))
+
 
 // Routing settings
 

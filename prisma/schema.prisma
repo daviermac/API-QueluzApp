@@ -1,3 +1,7 @@
+// -----------------------------------------------------
+// CONFIGURAÇÕES PRISMA
+// -----------------------------------------------------
+
 generator client {
   provider = "prisma-client-js"
   output   = "./generated/prisma"
@@ -8,304 +12,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Acompanhante {
-  idAcompanhante    Int                 @id @default(autoincrement())
-  nomeCompleto      String              @db.VarChar(255)
-  endereco          String?             @db.VarChar(255)
-  telefone          String?             @db.VarChar(11)
-  email             String?             @db.VarChar(255)
-  SolicitacaoViagem SolicitacaoViagem[]
-}
+// -----------------------------------------------------
+// ENUMS
+// -----------------------------------------------------
 
-model Carro {
-  idCarro                   Int         @id @default(autoincrement())
-  StatusCarro_idStatusCarro Int
-  TipoCarro_idTipoCarro     Int
-  modelo                    String      @db.VarChar(255)
-  cor                       String      @db.VarChar(255)
-  placa                     String      @db.VarChar(10)
-  capacidade                Int
-  StatusCarro               StatusCarro @relation(fields: [StatusCarro_idStatusCarro], references: [idStatusCarro], onDelete: NoAction, onUpdate: NoAction, map: "fk_carro_status")
-  TipoCarro                 TipoCarro   @relation(fields: [TipoCarro_idTipoCarro], references: [idTipoCarro], onDelete: NoAction, onUpdate: NoAction, map: "fk_carro_tipo")
-  Viagem                    Viagem[]
-
-  @@index([StatusCarro_idStatusCarro], map: "fk_carro_status")
-  @@index([TipoCarro_idTipoCarro], map: "fk_carro_tipo")
-}
-
-model CategoriaMensagemOuvidoria {
-  idCategoriaMensagemOuvidoria Int                                       @id @default(autoincrement())
-  nome_categoria               CategoriaMensagemOuvidoria_nome_categoria
-  MensagemOuvidoria            MensagemOuvidoria[]
-}
-
-model Curso {
-  idCurso        Int              @id @default(autoincrement())
-  titulo         String           @db.VarChar(255)
-  descricao      String           @db.VarChar(255)
-  local_curso    String           @db.VarChar(255)
-  imagem_capa    String           @db.VarChar(255)
-  criado_em      DateTime         @default(now()) @db.DateTime(0)
-  ativo          Boolean          @default(true)
-  IntervaloDatas IntervaloDatas[]
-}
-
-model Especialidade {
-  idEspecialidade         Int                       @id @default(autoincrement())
-  nome_especialidade      String                    @db.VarChar(255)
-  EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
-}
-
-model EspecialidadeUnidadeUbs {
-  Especialidade_idEspecialidade Int
-  UnidadeUbs_idUnidadeUbs       Int
-  Especialidade                 Especialidade @relation(fields: [Especialidade_idEspecialidade], references: [idEspecialidade], onDelete: Cascade, onUpdate: NoAction, map: "fk_especialidade")
-  UnidadeUbs                    UnidadeUbs    @relation(fields: [UnidadeUbs_idUnidadeUbs], references: [idUnidadeUbs], onDelete: Cascade, onUpdate: NoAction, map: "fk_unidade")
-
-  @@id([Especialidade_idEspecialidade, UnidadeUbs_idUnidadeUbs])
-  @@index([UnidadeUbs_idUnidadeUbs], map: "fk_unidade")
-}
-
-model Evento {
-  idEvento       Int              @id @default(autoincrement())
-  titulo         String           @db.VarChar(255)
-  descricao      String           @db.VarChar(255)
-  local_evento   String           @db.VarChar(255)
-  imagem_capa    String           @db.VarChar(255)
-  criado_em      DateTime         @default(now()) @db.DateTime(0)
-  ativo          Boolean          @default(true)
-  IntervaloDatas IntervaloDatas[]
-}
-
-model Funcao {
-  idFuncao          Int                 @id @default(autoincrement())
-  nome              String              @db.VarChar(255)
-  FuncionarioFuncao FuncionarioFuncao[]
-}
-
-model Funcionario {
-  idFuncionario     Int                 @id @default(autoincrement())
-  Usuario_idUsuario Int
-  pis               Int?
-  matricula         Int?
-  Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_funcionario_usuario")
-  FuncionarioFuncao FuncionarioFuncao[]
-  Viagem            Viagem[]
-
-  @@index([Usuario_idUsuario], map: "fk_funcionario_usuario")
-}
-
-model FuncionarioFuncao {
-  Funcionario_idFuncionario Int
-  Funcao_idFuncao           Int
-  Funcao                    Funcao      @relation(fields: [Funcao_idFuncao], references: [idFuncao], onDelete: Cascade, onUpdate: NoAction, map: "fk_funcfunc_funcao")
-  Funcionario               Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade, onUpdate: NoAction, map: "fk_funcfunc_funcionario")
-
-  @@id([Funcionario_idFuncionario, Funcao_idFuncao])
-  @@index([Funcao_idFuncao], map: "fk_funcfunc_funcao")
-}
-
-model IntervaloDatas {
-  idIntervaloDatas Int      @id @default(autoincrement())
-  Curso_idCurso    Int?
-  Evento_idEvento  Int?
-  data_inicio      DateTime @db.Date
-  data_fim         DateTime @db.Date
-  Curso            Curso?   @relation(fields: [Curso_idCurso], references: [idCurso], onDelete: Cascade, onUpdate: NoAction, map: "fk_intervalo_curso")
-  Evento           Evento?  @relation(fields: [Evento_idEvento], references: [idEvento], onDelete: Cascade, onUpdate: NoAction, map: "fk_intervalo_evento")
-
-  @@index([Curso_idCurso], map: "fk_intervalo_curso")
-  @@index([Evento_idEvento], map: "fk_intervalo_evento")
-}
-
-model MensagemOuvidoria {
-  idMensagemOuvidoria                                     Int                        @id @default(autoincrement())
-  Solicitacao_idSolicitacao                               Int
-  CategoriaMensagemOuvidoria_idCategoriaMensagemOuvidoria Int
-  assunto                                                 String                     @db.VarChar(255)
-  mensagem                                                String                     @db.Text
-  nomeSolicitante                                         String?                    @db.VarChar(255)
-  emailSolicitante                                        String?                    @db.VarChar(255)
-  numeroProtocolo                                         String?                    @db.Char(15)
-  status_2                                                String?                    @db.VarChar(50)
-  CategoriaMensagemOuvidoria                              CategoriaMensagemOuvidoria @relation(fields: [CategoriaMensagemOuvidoria_idCategoriaMensagemOuvidoria], references: [idCategoriaMensagemOuvidoria], onDelete: NoAction, onUpdate: NoAction, map: "fk_msg_categoria")
-  Solicitacao                                             Solicitacao                @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_msg_solicitacao")
-
-  @@index([CategoriaMensagemOuvidoria_idCategoriaMensagemOuvidoria], map: "fk_msg_categoria")
-  @@index([Solicitacao_idSolicitacao], map: "fk_msg_solicitacao")
-}
-
-model Parada {
-  idParada                              Int               @id @default(autoincrement())
-  SolicitacaoViagem_idSolicitacaoViagem Int
-  Viagem_idViagem                       Int
-  endereco                              String            @db.VarChar(255)
-  SolicitacaoViagem                     SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onDelete: Cascade, onUpdate: NoAction, map: "fk_parada_solviagem")
-  Viagem                                Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem], onDelete: Cascade, onUpdate: NoAction, map: "fk_parada_viagem")
-
-  @@index([SolicitacaoViagem_idSolicitacaoViagem], map: "fk_parada_solviagem")
-  @@index([Viagem_idViagem], map: "fk_parada_viagem")
-}
-
-model PedidoConsulta {
-  idPedidoConsulta          Int         @id @default(autoincrement())
-  UnidadeUbs_idUnidadeUbs   Int
-  Solicitacao_idSolicitacao Int
-  Solicitacao               Solicitacao @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_pedidoconsulta_solicitacao")
-  UnidadeUbs                UnidadeUbs  @relation(fields: [UnidadeUbs_idUnidadeUbs], references: [idUnidadeUbs], onDelete: NoAction, onUpdate: NoAction, map: "fk_pedidoconsulta_unidade")
-
-  @@index([Solicitacao_idSolicitacao], map: "fk_pedidoconsulta_solicitacao")
-  @@index([UnidadeUbs_idUnidadeUbs], map: "fk_pedidoconsulta_unidade")
-}
-
-model Solicitacao {
-  idSolicitacao                     Int                 @id @default(autoincrement())
-  TipoSolicitacao_idTipoSolicitacao Int
-  Usuario_idUsuario                 Int
-  primeiro_nome_solicitante         String              @db.VarChar(255)
-  sobrenome_solicitante             String              @db.VarChar(255)
-  email_solicitante                 String              @db.VarChar(255)
-  telefone_solicitante              String              @db.VarChar(15)
-  MensagemOuvidoria                 MensagemOuvidoria[]
-  PedidoConsulta                    PedidoConsulta[]
-  TipoSolicitacao                   TipoSolicitacao     @relation(fields: [TipoSolicitacao_idTipoSolicitacao], references: [idTipoSolicitacao], onDelete: NoAction, onUpdate: NoAction, map: "fk_solicitacao_tipo")
-  Usuario                           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_solicitacao_usuario")
-  SolicitacaoViagem                 SolicitacaoViagem[]
-
-  @@index([TipoSolicitacao_idTipoSolicitacao], map: "fk_solicitacao_tipo")
-  @@index([Usuario_idUsuario], map: "fk_solicitacao_usuario")
-}
-
-model SolicitacaoViagem {
-  idSolicitacaoViagem              Int               @id @default(autoincrement())
-  Solicitacao_idSolicitacao        Int
-  Acompanhante_idAcompanhante      Int?
-  StatusSolicitacaoViagem_idStatusViagem Int
-  Viagem_idViagem                  Int?
-  endereco_paciente                String            @db.VarChar(255)
-  local_consulta                   String            @db.VarChar(255)
-  cidade_consulta                  String            @db.VarChar(255)
-  comprovante_url                  String?           @db.VarChar(255)
-  data_consulta                    DateTime          @db.Date
-  horario_consulta                 DateTime          @db.Time(0)
-  Parada                           Parada[]
-  Acompanhante                     Acompanhante?     @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onUpdate: NoAction, map: "fk_solviagem_acomp")
-  Solicitacao                      Solicitacao       @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade, onUpdate: NoAction, map: "fk_solviagem_solicitacao")
-  StatusSolicitacao                StatusSolicitacaoViagem @relation(fields: [StatusSolicitacaoViagem_idStatusViagem], references: [idStatusViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_status")
-  Viagem                           Viagem?            @relation(fields: [Viagem_idViagem], references: [idViagem], onDelete: NoAction, onUpdate: NoAction, map: "fk_solviagem_viagem")
-
-  @@index([Acompanhante_idAcompanhante], map: "fk_solviagem_acomp")
-  @@index([Solicitacao_idSolicitacao], map: "fk_solviagem_solicitacao")
-  @@index([StatusSolicitacaoViagem_idStatusViagem], map: "fk_solviagem_status")
-  @@index([Viagem_idViagem], map: "fk_solviagem_viagem")
-}
-
-model StatusCarro {
-  idStatusCarro Int                     @id @default(autoincrement())
-  statusCarro   StatusCarro_statusCarro
-  Carro         Carro[]
-}
-
-model StatusSolicitacaoViagem {
-  idStatusViagem    Int                            @id @default(autoincrement())
-  statusViagem      StatusSolicitacao_statusViagem
-  SolicitacaoViagem SolicitacaoViagem[]
-}
-
-model Taxista {
-  idTaxista        Int    @id @default(autoincrement())
-  nome_taxista     String @db.VarChar(255)
-  telefone_taxista String @db.VarChar(20)
-}
-
-model TipoCarro {
-  idTipoCarro Int            @id @default(autoincrement())
-  nome        TipoCarro_nome
-  Carro       Carro[]
-}
-
-model TipoSolicitacao {
-  idTipoSolicitacao Int                             @id @default(autoincrement())
-  tipoSolicitacao   TipoSolicitacao_tipoSolicitacao
-  Solicitacao       Solicitacao[]
-}
-
-model UnidadeUbs {
-  idUnidadeUbs            Int                       @id @default(autoincrement())
-  nome_unidade            String                    @db.VarChar(255)
-  endereco_unidade        String                    @db.VarChar(255)
-  EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
-  PedidoConsulta          PedidoConsulta[]
-}
-
-model Usuario {
-  idUsuario          Int           @id @default(autoincrement())
-  primeiroNome       String        @db.VarChar(255)
-  sobrenome         String        @db.VarChar(255)
-  cpf                String        @db.Char(11) @unique
-  telefone           String        @db.Char(11)
-  email              String        @db.VarChar(255) @unique
-  senha              String        @db.VarChar(255)
-  endereco           String        @db.VarChar(255)
-  telefoneConfirmado Boolean       @default(false)
-  Funcionario        Funcionario[]
-  Solicitacao        Solicitacao[]
-}
-
-model Viagem {
-  idViagem                  Int                 @id @default(autoincrement())
-  Funcionario_idFuncionario Int
-  Carro_idCarro             Int
-  dataPartida               DateTime            @db.DateTime(0)
-  enderecoLocalPartida      String              @db.VarChar(255)
-  Parada                    Parada[]
-  SolicitacaoViagem         SolicitacaoViagem[]
-  Carro                     Carro               @relation(fields: [Carro_idCarro], references: [idCarro], onDelete: NoAction, onUpdate: NoAction, map: "fk_viagem_carro")
-  Funcionario               Funcionario         @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade, onUpdate: NoAction, map: "fk_viagem_funcionario")
-
-  @@index([Carro_idCarro], map: "fk_viagem_carro")
-  @@index([Funcionario_idFuncionario], map: "fk_viagem_funcionario")
-}
-
-model Categoria {
-  id       Int       @id @default(autoincrement())
-  nome     String
-  noticias Noticia[]
-}
-
-model Noticia {
-  id          Int      @id @default(autoincrement())
-  titulo      String
-  corpo       String
-  imagemUrl   String
-  categoriaId Int
-  autor       String
-  categoria   Categoria @relation(fields: [categoriaId], references: [id])
-  createdAt   DateTime @default(now())
-}
-
-enum CategoriaMensagemOuvidoria_nome_categoria {
-  DENUNCIA
-  SOLICITACAO
-  SUGESTAO
-  RECLAMACAO
-  ELOGIO
-}
-
-enum StatusCarro_statusCarro {
+// Status atual do carro disponível para viagens
+enum StatusCarro {
   DISPONIVEL
   EM_USO        @map("EM USO")
   EM_MANUTENCAO @map("EM MANUTENCAO")
 }
 
-enum StatusSolicitacao_statusViagem {
-  PENDENTE
-  CONFIRMADA
-  REALIZADA
-  CANCELADA
-}
-
-enum TipoCarro_nome {
+// Classificação dos veículos
+enum TipoCarro {
   VAN
   MINIVAN
   HATCH
@@ -313,8 +32,330 @@ enum TipoCarro_nome {
   SUV
 }
 
-enum TipoSolicitacao_tipoSolicitacao {
+// Categorias de mensagens enviadas via ouvidoria
+enum CategoriaMensagemOuvidoria {
+  DENUNCIA
+  SOLICITACAO
+  SUGESTAO
+  RECLAMACAO
+  ELOGIO
+}
+
+// Status de uma solicitação de viagem
+enum StatusSolicitacaoViagem {
+  PENDENTE
+  CONFIRMADA
+  REALIZADA
+  CANCELADA
+}
+
+// Tipo geral de solicitação
+enum TipoSolicitacao {
   VIAGEM
   OUVIDORIA
   CONSULTA
+}
+
+// Categoria das notícias do portal
+enum CategoriaNoticia {
+  SAUDE
+  EDUCACAO
+  INFRAESTRUTURA
+  CULTURA
+  ESPORTE
+}
+
+// -----------------------------------------------------
+// USUÁRIO, FUNCIONÁRIO E FUNÇÕES
+// -----------------------------------------------------
+
+// Usuário geral do sistema (pacientes, cidadãos, funcionários)
+model Usuario {
+  idUsuario          Int           @id @default(autoincrement())
+  primeiroNome       String
+  sobrenome          String
+  cpf                String        @unique @db.Char(11)
+  telefone           String        @db.Char(11)
+  email              String        @unique
+  senha              String
+  endereco           String
+  telefoneConfirmado Boolean       @default(false)
+  emailConfirmado    Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  AcompanhantePaciente AcompanhantePaciente[]
+
+  Funcionario Funcionario[]
+  Solicitacao Solicitacao[]
+}
+
+// Funcionário (ex.: motorista, administrativo etc.)
+model Funcionario {
+  idFuncionario     Int                 @id @default(autoincrement())
+  Usuario_idUsuario Int
+  pis               Int?
+  matricula         Int?
+
+  Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
+  FuncionarioFuncao FuncionarioFuncao[]
+  Viagem            Viagem[]
+
+  @@index([Usuario_idUsuario])
+}
+
+// Funções atribuídas aos funcionários
+model Funcao {
+  idFuncao          Int                 @id @default(autoincrement())
+  nome              String
+  FuncionarioFuncao FuncionarioFuncao[]
+}
+
+// Tabela pivot Funcionario <-> Função
+model FuncionarioFuncao {
+  Funcionario_idFuncionario Int
+  Funcao_idFuncao           Int
+
+  Funcao      Funcao      @relation(fields: [Funcao_idFuncao], references: [idFuncao], onDelete: Cascade)
+  Funcionario Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade)
+
+  @@id([Funcionario_idFuncionario, Funcao_idFuncao])
+  @@index([Funcao_idFuncao])
+}
+
+// -----------------------------------------------------
+// SOLICITAÇÕES (SUPER-ENTIDADE)
+// -----------------------------------------------------
+
+// Solicitação genérica (pode ser viagem, consulta, ouvidoria...)
+model Solicitacao {
+  idSolicitacao             Int                 @id @default(autoincrement())
+  Usuario_idUsuario         Int
+  primeiro_nome_solicitante String
+  sobrenome_solicitante     String
+  email_solicitante         String
+  telefone_solicitante      String
+  TipoSolicitacao           TipoSolicitacao
+
+  Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
+  MensagemOuvidoria MensagemOuvidoria[]
+  PedidoConsulta    PedidoConsulta[]
+  SolicitacaoViagem SolicitacaoViagem[]
+
+  @@index([Usuario_idUsuario])
+}
+
+// -----------------------------------------------------
+// OUVIDORIA
+// -----------------------------------------------------
+
+model MensagemOuvidoria {
+  idMensagemOuvidoria        Int                        @id @default(autoincrement())
+  Solicitacao_idSolicitacao  Int
+
+  assunto                    String
+  mensagem                   String
+  nomeSolicitante            String?
+  emailSolicitante           String?
+  numeroProtocolo            String?                    @db.Char(15)
+  status                     String?
+  CategoriaMensagemOuvidoria CategoriaMensagemOuvidoria
+
+  Solicitacao                Solicitacao @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
+
+  @@index([Solicitacao_idSolicitacao])
+}
+
+// -----------------------------------------------------
+// CONSULTAS / UBS
+// -----------------------------------------------------
+
+model UnidadeUbs {
+  idUnidadeUbs            Int                       @id @default(autoincrement())
+  nome_unidade            String
+  endereco_unidade        String
+
+  EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
+  PedidoConsulta          PedidoConsulta[]
+}
+
+model Especialidade {
+  idEspecialidade         Int                       @id @default(autoincrement())
+  nome_especialidade      String
+  EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
+}
+
+// Pivot Especialidade <-> Unidade UBS
+model EspecialidadeUnidadeUbs {
+  Especialidade_idEspecialidade Int
+  UnidadeUbs_idUnidadeUbs       Int
+
+  Especialidade Especialidade @relation(fields: [Especialidade_idEspecialidade], references: [idEspecialidade], onDelete: Cascade)
+  UnidadeUbs    UnidadeUbs    @relation(fields: [UnidadeUbs_idUnidadeUbs], references: [idUnidadeUbs], onDelete: Cascade)
+
+  @@id([Especialidade_idEspecialidade, UnidadeUbs_idUnidadeUbs])
+  @@index([UnidadeUbs_idUnidadeUbs])
+}
+
+model PedidoConsulta {
+  idPedidoConsulta          Int         @id @default(autoincrement())
+  UnidadeUbs_idUnidadeUbs   Int
+  Solicitacao_idSolicitacao Int
+
+  Solicitacao Solicitacao @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
+  UnidadeUbs  UnidadeUbs  @relation(fields: [UnidadeUbs_idUnidadeUbs], references: [idUnidadeUbs])
+
+  @@index([Solicitacao_idSolicitacao])
+  @@index([UnidadeUbs_idUnidadeUbs])
+}
+
+// -----------------------------------------------------
+// VIAGENS
+// -----------------------------------------------------
+
+// Pessoa que acompanha o paciente
+model Acompanhante {
+  idAcompanhante    Int                 @id @default(autoincrement())
+  nomeCompleto      String
+  endereco          String
+  telefone          String              @db.Char(11)
+  email             String
+  cpf               String              @unique @db.Char(11)
+  AcompanhantePaciente AcompanhantePaciente[]
+
+  SolicitacaoViagem SolicitacaoViagem[]
+}
+
+// Relação entre acompanhante e paciente (usuário)
+
+model AcompanhantePaciente {
+  Acompanhante_idAcompanhante Int
+  Usuario_idUsuario           Int
+
+  Acompanhante Acompanhante @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onDelete: Cascade)
+  Usuario      Usuario      @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
+
+  @@id([Acompanhante_idAcompanhante, Usuario_idUsuario])
+  @@index([Usuario_idUsuario])
+}
+
+// Solicitações de viagem (subtipo de Solicitação)
+model SolicitacaoViagem {
+  idSolicitacaoViagem         Int                     @id @default(autoincrement())
+  Solicitacao_idSolicitacao   Int
+  Acompanhante_idAcompanhante Int?
+  Viagem_idViagem             Int?
+
+  endereco_paciente String
+  local_consulta    String
+  cidade_consulta   String
+  comprovante_url   String?
+  data_consulta     DateTime @db.Date
+  horario_consulta  DateTime @db.Time(0)
+  StatusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
+
+  Parada        Parada[]
+  Acompanhante  Acompanhante? @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante])
+  Solicitacao   Solicitacao   @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
+  Viagem        Viagem?       @relation(fields: [Viagem_idViagem], references: [idViagem])
+
+  @@index([Acompanhante_idAcompanhante])
+  @@index([Solicitacao_idSolicitacao])
+  @@index([Viagem_idViagem])
+}
+
+// Viagem (quando uma solicitação vira um transporte real)
+model Viagem {
+  idViagem                  Int                 @id @default(autoincrement())
+  Funcionario_idFuncionario Int
+  Carro_idCarro             Int
+
+  dataPartida               DateTime
+  enderecoLocalPartida      String
+
+  Parada            Parada[]
+  SolicitacaoViagem SolicitacaoViagem[]
+  Carro             Carro      @relation(fields: [Carro_idCarro], references: [idCarro])
+  Funcionario       Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade)
+
+  @@index([Carro_idCarro])
+  @@index([Funcionario_idFuncionario])
+}
+
+// Pontos de parada de uma viagem
+model Parada {
+  idParada                              Int @id @default(autoincrement())
+  SolicitacaoViagem_idSolicitacaoViagem Int
+  Viagem_idViagem                       Int
+
+  endereco String
+
+  SolicitacaoViagem SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onDelete: Cascade)
+  Viagem            Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem])
+
+  @@index([SolicitacaoViagem_idSolicitacaoViagem])
+  @@index([Viagem_idViagem])
+}
+
+// Informações sobre os carros
+model Carro {
+  idCarro     Int         @id @default(autoincrement())
+  modelo      String
+  cor         String
+  placa       String      @db.VarChar(10)
+  capacidade  Int
+  StatusCarro StatusCarro @default(DISPONIVEL)
+  TipoCarro   TipoCarro
+
+  Viagem      Viagem[]
+}
+
+// -----------------------------------------------------
+// CURSOS E EVENTOS
+// -----------------------------------------------------
+
+model Curso {
+  idCurso        Int      @id @default(autoincrement())
+  titulo         String
+  descricao      String
+  local_curso    String
+  imagem_capa    String
+  criado_em      DateTime @default(now())
+  ativo          Boolean  @default(true)
+
+  IntervaloDatas String
+}
+
+model Evento {
+  idEvento       Int      @id @default(autoincrement())
+  titulo         String
+  descricao      String
+  local_evento   String
+  imagem_capa    String
+  criado_em      DateTime @default(now())
+  ativo          Boolean  @default(true)
+  mesInicio      Int
+  IntervaloDatas String
+}
+
+// -----------------------------------------------------
+// TAXISTAS
+// -----------------------------------------------------
+
+model Taxista {
+  idTaxista        Int    @id @default(autoincrement())
+  nome_taxista     String
+  telefone_taxista String
+}
+
+// -----------------------------------------------------
+// NOTÍCIAS
+// -----------------------------------------------------
+
+model Noticia {
+  id        Int              @id @default(autoincrement())
+  titulo    String
+  corpo     String
+  imagemUrl String
+  autor     String
+  categoria CategoriaNoticia
+  createdAt DateTime         @default(now())
 }

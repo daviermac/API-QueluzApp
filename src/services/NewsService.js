@@ -1,21 +1,16 @@
 import prisma from '../config/prisma.js'
-import { uploadFileToS3, deleteFileFromS3 } from '../config/S3.js'
 
-export async function createNews(title, body, imageBuffer, imageFileName, contentType, categoryId, author) {
+export async function createNews(title, body, filePath, fileName, contentType, categoryId, author) {
     try {
-        let imageUrl = null
-        
-        // Se houver imagem, faz o upload para S3
-        if (imageBuffer && imageFileName) {
-            imageUrl = await uploadFileToS3(imageBuffer, imageFileName, contentType)
-        }
-        
+        // Gera URL acessável pelo front
+        const imageUrl = `/news/${fileName}`
+
         const news = await prisma.noticia.create({
             data: {
                 titulo: title,
                 corpo: body,
-                imagem: imageUrl,
-                categoriaId: categoryId,
+                imagem: imageUrl, // salva apenas o caminho
+                categoriaId: Number(categoryId),
                 autor: author
             }
         })
@@ -32,17 +27,31 @@ export async function listAllNews() {
     return news
 }
 
-export async function listNewsByCategory(categoryId) {
+export async function listNewsByCategory(category) {
     const news = await prisma.noticia.findMany({
         where: {
-            categoriaId: categoryId
+            categoria: category
         }
     })
-    
+
     return news
 }
 
-export async function editNews(newsId, title, body, image, categoryId, author) {
+export async function getNewsById(newsId) {
+    const news = await prisma.noticia.findUnique({
+        where: {
+            id: newsId
+        }
+    })
+
+    if (!news) {
+        throw new Error("Erro: notícia não encontrada!")
+    }
+
+    return news
+}
+
+export async function editNews(newsId, title, body, image, category, author) {
     if (!newsId) {
         throw new Error("Erro: ID da notícia não informado!")
     }
@@ -55,7 +64,7 @@ export async function editNews(newsId, title, body, image, categoryId, author) {
             titulo: title,
             corpo: body,
             imagem: image,
-            categoriaId: categoryId,
+            categoria: category,
             autor: author
         }
     })
@@ -75,55 +84,4 @@ export async function deleteNews(newsId) {
     })
 
     return deletedNews
-}
-
-export async function createCategory(name) {
-    if (!name) {
-        throw new Error("Erro: Nome da categoria não informado!")
-    }
-    
-    const category = await prisma.categoria.create({
-        data: {
-            nome: name
-        }
-    })
-
-    return category
-}
-
-export async function deleteCategory(categoryId) {
-    if (!categoryId) {
-        throw new Error("Erro: ID da categoria não informado!")
-    }
-
-    const deletedCategory = await prisma.categoria.delete({
-        where: {
-            id: categoryId
-        }
-    })
-
-    return deletedCategory
-}
-
-export async function editCategory(categoryId, name) {
-    if (!categoryId) {
-        throw new Error("Erro: ID da categoria não informado!")
-    }
-
-    const updatedCategory = await prisma.categoria.update({
-        where: {
-            id: categoryId
-        },
-        data: {
-            nome: name
-        }
-    })
-
-    return updatedCategory
-}
-
-export async function listAllCategories() {
-    const categories = await prisma.categoria.findMany()
-
-    return categories
 }

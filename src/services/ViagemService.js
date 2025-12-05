@@ -6,11 +6,26 @@ import parseHoraBR from "../helpers/parseHoraBR.js";
 
 import { getSignedDownloadUrl } from "../config/S3.js";
 
+export async function getCompanionData(userId, companionId) {
+  const companionUserRelation = await prisma.acompanhantePaciente.findFirst({
+    where: {
+      Usuario_idUsuario: userId,
+      Acompanhante_idAcompanhante: companionId
+    }
+  });
+
+  if (!companionUserRelation) {
+    throw new Error("Erro: Acompanhante não cadastrado, ou sem relação com este usuário!")
+  }
+
+  
+  
+}
+
 export async function listViagemRequests() {
   const requests = await prisma.solicitacaoViagem.findMany({
     include: {
       Solicitacao: true,
-      StatusSolicitacao: true,
       Acompanhante: true
     }
   })
@@ -41,7 +56,6 @@ export async function listViagemRequestsByUser(userId) {
   const requests = await prisma.solicitacaoViagem.findMany({
     include: {
       Solicitacao: true,
-      StatusSolicitacao: true,
       Acompanhante: true
     },
     where: {
@@ -74,14 +88,15 @@ export async function listViagemRequestsByUser(userId) {
   return requestsWithSignedUrls;
 }
 
-export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_city, comprovante, data, hora, companion_name, companion_phone, companion_email, companion_address ) {
+export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_city, comprovante, data, hora, companion_cpf, companion_name, companion_phone, companion_email, companion_address ) {
   if (!first_name || !surname || !email || !cellphone || !address || !local || !local_city || !comprovante || !data || !hora) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
   } 
 
   // Criação do acompanhante
-  let acompanhante
-  if (companion_name) {
+  let acompanhante;
+
+  if (companion_cpf) {
     acompanhante = await prisma.acompanhante.create({
       data: {
         nomeCompleto: companion_name,
@@ -90,23 +105,18 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
         endereco: companion_address
       }
     })
+
+
+    
   }
 
   // Criação de uma solicitação
-  const tipoSolicitacaoViagem = await prisma.tipoSolicitacao.findFirst({
-    where: {
-      tipoSolicitacao: 'VIAGEM'
-    }
-  })
-
   let soliticacao = await prisma.solicitacao.create({
     data: {
       Usuario: {
         connect: { idUsuario }
       },
-      TipoSolicitacao: {
-        connect: { idTipoSolicitacao: tipoSolicitacaoViagem.idTipoSolicitacao }
-      },
+      TipoSolicitacao: "VIAGEM",
       primeiro_nome_solicitante: first_name,
       sobrenome_solicitante: surname,
       email_solicitante: email,
@@ -115,21 +125,18 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
   })
 
   // Criação da solicitação da viagem
-  const statusPendente = await prisma.statusSolicitacaoViagem.findFirst({ where: { statusViagem: 'PENDENTE' }})
-
   const viagemData = {
-    StatusSolicitacao: {
-      connect: { idStatusViagem: statusPendente.idStatusViagem}
-    },
     Solicitacao: {
       connect: { idSolicitacao: soliticacao.idSolicitacao }
     },
+    
     endereco_paciente: address,
     local_consulta: local,
     cidade_consulta: local_city,
     comprovante_url: comprovante,
     data_consulta:  parseDateBR(data),
     horario_consulta: parseHoraBR(hora),
+    StatusSolicitacao: 'PENDENTE'
   };
 
   if (acompanhante) {
@@ -145,6 +152,30 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
   return viagem;
 }
 
-export async function createViagem() {
-    
+export async function createViagem( idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida ) {
+  if (!idCarro || !idFuncionario || !idsSolicitacoes || !dataPartida || !enderecoLocalPartida) {
+    throw new Error("Erro: Todos os dados são obrigatórios!");
+  }
+  
+  const viagem = await prisma.viagem.create({
+    data: {
+      Carro_idCarro: idCarro,
+      Funcionario_idFuncionario: idFuncionario,
+      dataPartida: parseDateBR(dataPartida),
+      enderecoLocalPartida: enderecoLocalPartida
+    }
+  })
+
+  idsSolicitacoes.map(async (idSolicitacao) => {
+   await prisma.solicitacaoViagem.update({
+      where: {
+        idSolicitacaoViagem: idSolicitacao
+      },
+      data: {
+        Viagem_idViagem: viagem.idViagem
+      }
+    })
+  })
+
+  return viagem
 }
