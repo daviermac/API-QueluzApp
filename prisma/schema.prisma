@@ -218,7 +218,7 @@ model Acompanhante {
   endereco          String
   telefone          String              @db.Char(11)
   email             String
-  cpf               String              @unique @db.Char(11)
+  cpf               String              @db.Char(11)
   AcompanhantePaciente AcompanhantePaciente[]
 
   SolicitacaoViagem SolicitacaoViagem[]

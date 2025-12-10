@@ -85,17 +85,32 @@ router.post("/generate-url", async (req, res) => {
 })
 
 router.post("/request", async (req, res) => {
-    try {
+    try {   
         const { 
             idUsuario, first_name, surname, email, cellphone, address, local, local_city, 
-            comprovante, data, hora, companion_name, companion_phone, companion_email, 
+            comprovante, data, hora, companion_name, companion_phone, companion_email, companion_cpf,
             companion_address 
         } = req.body
 
-        const viagem = await ViagemService.requestViagem(idUsuario, first_name, surname, email, cellphone, address, local, local_city, 
-            comprovante, data, hora, companion_name, companion_phone, companion_email, 
-            companion_address)
-
+        const viagem = await ViagemService.requestViagem(
+            idUsuario, 
+            first_name, 
+            surname, 
+            email, 
+            cellphone, 
+            address, 
+            local, 
+            local_city, 
+            comprovante, 
+            data, 
+            hora, 
+            companion_cpf,        
+            companion_name,
+            companion_phone,
+            companion_email,
+            companion_address
+        )   
+            
         return res.json({
             error: false,
             message: 'Viagem solicitada com sucesso!',

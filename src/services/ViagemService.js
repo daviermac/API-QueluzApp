@@ -30,8 +30,6 @@ export async function listViagemRequests() {
   const requestsWithSignedUrls = await Promise.all(
     requests.map(async (req) => {
       if (req.comprovante_url) {
-        // remove o domínio e pega só o "key"
-
         const signedUrl = await getSignedDownloadUrl(req.comprovante_url);
         return {
           ...req,
@@ -93,9 +91,11 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
     acompanhante = await prisma.acompanhante.create({
       data: {
         nomeCompleto: companion_name,
+        endereco: companion_address,
         telefone: companion_phone.replace(/\D/g, ''),
         email: companion_email,
-        endereco: companion_address
+        cpf: companion_cpf
+        
       }
     })    
   }
