@@ -17,9 +17,6 @@ export async function getCompanionData(userId, companionId) {
   if (!companionUserRelation) {
     throw new Error("Erro: Acompanhante não cadastrado, ou sem relação com este usuário!")
   }
-
-  
-  
 }
 
 export async function listViagemRequests() {
@@ -34,12 +31,8 @@ export async function listViagemRequests() {
     requests.map(async (req) => {
       if (req.comprovante_url) {
         // remove o domínio e pega só o "key"
-        const fileKey = req.comprovante_url.replace(
-          /^https:\/\/[^/]+\/(.+)$/,
-          "$1"
-        );
 
-        const signedUrl = await getSignedDownloadUrl(fileKey, "image/jpeg");
+        const signedUrl = await getSignedDownloadUrl(req.comprovante_url);
         return {
           ...req,
           link_comprovante_acessivel: signedUrl
@@ -104,12 +97,9 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
         email: companion_email,
         endereco: companion_address
       }
-    })
-
-
-    
+    })    
   }
-
+  
   // Criação de uma solicitação
   let soliticacao = await prisma.solicitacao.create({
     data: {

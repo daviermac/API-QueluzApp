@@ -15,9 +15,8 @@ router.post("/", upload.single("imagem-principal"), async (req, res) => {
             })
         }
 
-        const filePath = req.file.path
-        const fileName = req.file.filename
-        const contentType = req.file.mimetype
+        const fileBuffer = req.file.buffer
+        const fileName = req.file.originalname
         
         if (!title || !body) {
             return res.status(400).json({
@@ -29,9 +28,8 @@ router.post("/", upload.single("imagem-principal"), async (req, res) => {
         const news = await NewsService.createNews(
             title, 
             body, 
-            filePath,
+            fileBuffer,
             fileName,
-            contentType,
             categoryId, 
             author
         )

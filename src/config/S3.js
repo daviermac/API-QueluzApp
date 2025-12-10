@@ -8,17 +8,17 @@ const s3Client = new S3Client({
 })
 const bucket = process.env.AWS_BUCKET
 
-export async function getSignedDownloadUrl(fileKey, fileType) {
-    const command = new GetObjectCommand({ Bucket: bucket, Key: fileKey, ContentType: fileType })
+export async function getSignedDownloadUrl(fileKey) {
+    const command = new GetObjectCommand({ Bucket: bucket, Key: fileKey })
     return await getSignedUrl(s3Client, command, { expiresIn: 3600 })
-}
+}   
 
-export async function getSignedUploadUrl(fileKey, fileType) {
-    const command = new PutObjectCommand({ Bucket: bucket, Key: fileKey, ContentType: fileType });
+export async function getSignedUploadUrl(fileKey) {
+    const command = new PutObjectCommand({ Bucket: bucket, Key: fileKey });
     return await getSignedUrl(s3Client, command, { expiresIn: 60 })
-}
+}   
 
-export async function uploadFileToS3(fileBuffer, fileName, contentType) {
+export async function uploadNewsPhotoToS3(fileBuffer, fileName, contentType) {
     const key = `news/${Date.now()}-${fileName}`
     const command = new PutObjectCommand({
         Bucket: bucket,
@@ -29,9 +29,9 @@ export async function uploadFileToS3(fileBuffer, fileName, contentType) {
     
     await s3Client.send(command)
     
-    return `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`
-}
-
+    return key
+}   
+    
 export async function deleteFileFromS3(fileUrl) {
     try {
         const key = fileUrl.split('.com/')[1]

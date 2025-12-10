@@ -1,20 +1,20 @@
 import prisma from '../config/prisma.js'
+import { uploadNewsPhotoToS3 } from '../config/S3.js'
 
-export async function createNews(title, body, filePath, fileName, contentType, categoryId, author) {
+export async function createNews(title, body, fileBuffer, fileName, category, author) {
     try {
-        // Gera URL acessável pelo front
-        const imageUrl = `/news/${fileName}`
+        const key = await uploadNewsPhotoToS3(fileBuffer, fileName)
 
         const news = await prisma.noticia.create({
             data: {
                 titulo: title,
                 corpo: body,
-                imagem: imageUrl, // salva apenas o caminho
-                categoriaId: Number(categoryId),
+                imagem: key, // salva apenas o caminho
+                categoria: category,
                 autor: author
             }
         })
-        
+
         return news
     } catch (error) {
         throw new Error(`Erro ao criar notícia: ${error.message}`)

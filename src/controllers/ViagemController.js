@@ -69,13 +69,11 @@ router.post("/generate-url", async (req, res) => {
         const fileKey = `comprovantes/${idUsuario}/${fileName}`
 
         const uploadUrl = await getSignedUploadUrl(fileKey, fileType)
-        
-        const fileUrl = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${fileKey}`
-        
+                
         res.status(201).json({ 
             error: false, 
             uploadUrl, 
-            fileUrl 
+            fileKey 
         });
     } catch (error) {
         console.error(`Erro ao gerar url: ${error.message}`)
