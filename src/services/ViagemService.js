@@ -95,7 +95,6 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
         telefone: companion_phone.replace(/\D/g, ''),
         email: companion_email,
         cpf: companion_cpf
-        
       }
     })    
   }
@@ -142,30 +141,55 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
   return viagem;
 }
 
-export async function createViagem( idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida ) {
-  if (!idCarro || !idFuncionario || !idsSolicitacoes || !dataPartida || !enderecoLocalPartida) {
+export async function createViagem(idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida) {
+  // Validações
+  if (!idCarro || !idFuncionario || !dataPartida || !enderecoLocalPartida) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
   }
-  
-  const viagem = await prisma.viagem.create({
-    data: {
-      Carro_idCarro: idCarro,
-      Funcionario_idFuncionario: idFuncionario,
-      dataPartida: parseDateBR(dataPartida),
-      enderecoLocalPartida: enderecoLocalPartida
+
+  if (!Array.isArray(idsSolicitacoes) || idsSolicitacoes.length === 0) {
+    throw new Error("Erro: É necessário informar ao menos uma solicitação!");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    // Verifica carro
+    const car = await tx.carro.findUnique({
+      where: { idCarro }
+    });
+
+    if (!car || car.StatusCarro !== 'DISPONIVEL') {
+      throw new Error("Erro: Carro não cadastrado ou indisponível!");
     }
-  })
 
-  idsSolicitacoes.map(async (idSolicitacao) => {
-   await prisma.solicitacaoViagem.update({
-      where: {
-        idSolicitacaoViagem: idSolicitacao
-      },
+    // Cria viagem
+    const viagem = await tx.viagem.create({
       data: {
-        Viagem_idViagem: viagem.idViagem
+        Carro_idCarro: idCarro,
+        Funcionario_idFuncionario: idFuncionario,
+        dataPartida: parseDateBR(dataPartida),
+        enderecoLocalPartida
       }
-    })
-  })
+    });
 
-  return viagem
+    // Atualiza carro
+    await tx.carro.update({
+      where: { idCarro },
+      data: { StatusCarro: 'EM_USO' }
+    });
+
+    // Atualiza solicitações (esperando todas)
+    await Promise.all(
+      idsSolicitacoes.map((idSolicitacao) =>
+        tx.solicitacaoViagem.update({
+          where: { idSolicitacaoViagem: idSolicitacao },
+          data: {
+            Viagem_idViagem: viagem.idViagem,
+            StatusSolicitacao: 'CONFIRMADA'
+          }
+        })
+      )
+    );
+
+    return viagem;
+  });
 }

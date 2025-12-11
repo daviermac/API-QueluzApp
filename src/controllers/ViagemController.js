@@ -129,9 +129,19 @@ router.post("/create", async (req, res) => {
     const { idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida } = req.body
 
     try {
-        
+        const viagem = await ViagemService.createViagem(idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida)
+
+        return res.json({
+            error: false,
+            message: 'Viagem criada com sucesso!',
+            viagem
+        })   
     } catch (error) {
-        
+        console.error(`Erro ao cadastrar viagem: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao cadastrar viagem: ${error.message}`
+        })
     }
 })
 

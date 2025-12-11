@@ -5,7 +5,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./generated"
-}
+} 
 
 datasource db {
   provider = "mysql"
@@ -21,7 +21,7 @@ enum StatusCarro {
   DISPONIVEL
   EM_USO        @map("EM USO")
   EM_MANUTENCAO @map("EM MANUTENCAO")
-}
+} 
 
 // Classificação dos veículos
 enum TipoCarro {
@@ -30,7 +30,7 @@ enum TipoCarro {
   HATCH
   SEDAN
   SUV
-}
+} 
 
 // Categorias de mensagens enviadas via ouvidoria
 enum CategoriaMensagemOuvidoria {
@@ -39,7 +39,7 @@ enum CategoriaMensagemOuvidoria {
   SUGESTAO
   RECLAMACAO
   ELOGIO
-}
+} 
 
 // Status de uma solicitação de viagem
 enum StatusSolicitacaoViagem {
@@ -100,7 +100,7 @@ model Funcionario {
   Viagem            Viagem[]
 
   @@index([Usuario_idUsuario])
-}
+} 
 
 // Funções atribuídas aos funcionários
 model Funcao {
@@ -150,7 +150,6 @@ model Solicitacao {
 model MensagemOuvidoria {
   idMensagemOuvidoria        Int                        @id @default(autoincrement())
   Solicitacao_idSolicitacao  Int
-
   assunto                    String
   mensagem                   String
   nomeSolicitante            String?
@@ -175,13 +174,13 @@ model UnidadeUbs {
 
   EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
   PedidoConsulta          PedidoConsulta[]
-}
+} 
 
 model Especialidade {
   idEspecialidade         Int                       @id @default(autoincrement())
   nome_especialidade      String
   EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
-}
+} 
 
 // Pivot Especialidade <-> Unidade UBS
 model EspecialidadeUnidadeUbs {
@@ -193,7 +192,7 @@ model EspecialidadeUnidadeUbs {
 
   @@id([Especialidade_idEspecialidade, UnidadeUbs_idUnidadeUbs])
   @@index([UnidadeUbs_idUnidadeUbs])
-}
+} 
 
 model PedidoConsulta {
   idPedidoConsulta          Int         @id @default(autoincrement())
@@ -219,8 +218,8 @@ model Acompanhante {
   telefone          String              @db.Char(11)
   email             String
   cpf               String              @db.Char(11)
-  AcompanhantePaciente AcompanhantePaciente[]
 
+  AcompanhantePaciente AcompanhantePaciente[]
   SolicitacaoViagem SolicitacaoViagem[]
 }
 
@@ -250,9 +249,8 @@ model SolicitacaoViagem {
   data_consulta               DateTime @db.Date
   horario_consulta            DateTime @db.Time(0)
   motivo_cancelamento         String? 
-
+  
   StatusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
-
   Parada        Parada[]
   Acompanhante  Acompanhante? @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante])
   Solicitacao   Solicitacao   @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
@@ -268,10 +266,9 @@ model Viagem {
   idViagem                  Int                 @id @default(autoincrement())
   Funcionario_idFuncionario Int
   Carro_idCarro             Int
-
   dataPartida               DateTime
   enderecoLocalPartida      String
-
+  
   Parada            Parada[]
   SolicitacaoViagem SolicitacaoViagem[]
   Carro             Carro      @relation(fields: [Carro_idCarro], references: [idCarro])
@@ -286,9 +283,8 @@ model Parada {
   idParada                              Int @id @default(autoincrement())
   SolicitacaoViagem_idSolicitacaoViagem Int
   Viagem_idViagem                       Int
-
   endereco String
-
+  
   SolicitacaoViagem SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onDelete: Cascade)
   Viagem            Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem])
 
@@ -303,9 +299,9 @@ model Carro {
   cor         String
   placa       String      @db.VarChar(10)
   capacidade  Int
+  
   StatusCarro StatusCarro @default(DISPONIVEL)
   TipoCarro   TipoCarro
-
   Viagem      Viagem[]
 }
 
@@ -321,7 +317,6 @@ model Curso {
   imagem_capa    String
   criado_em      DateTime @default(now())
   ativo          Boolean  @default(true)
-
   IntervaloDatas String
 }
 
@@ -357,6 +352,7 @@ model Noticia {
   corpo     String
   imagemUrl String
   autor     String
+  
   categoria CategoriaNoticia
   createdAt DateTime         @default(now())
 }

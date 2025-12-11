@@ -6,14 +6,6 @@ import prisma from './src/config/prisma.js'
 const app = express()
 config()
 
-// Configurar multer para armazenar na memória
-const upload = multer({ 
-    storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB
-    }
-})
-
 // Middlewares setting
 
 app.use(express.json())
@@ -43,7 +35,7 @@ app.use("/viagem", ViagemController)
 app.use("/car", CarController)
 app.use("/request", RequestsController)
 app.use("/funcionario", FuncionarioController)
-app.use("/news", upload.single('image'), NewsController)
+app.use("/news", NewsController)
 
 // Server instance
 
