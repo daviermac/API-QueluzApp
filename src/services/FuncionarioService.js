@@ -35,22 +35,24 @@ export async function createFuncionario(idUsuario, pis, matricula, idFuncao) {
         throw new Error("Erro: dados obrigatórios!")
     }
 
-    const funcionario = await prisma.funcionario.create({
-        data: {
-            Usuario_idUsuario: idUsuario,
-            pis,
-            matricula,
-        }
-    })
+    return await prisma.$transaction(async (tx) => {
+        const funcionario = await tx.funcionario.create({
+            data: {
+                Usuario_idUsuario: idUsuario,
+                pis,
+                matricula,
+            }
+        })
 
-    await prisma.funcionarioFuncao.create({
-        data: {
-            Funcionario_idFuncionario: funcionario.idFuncionario,
-            Funcao_idFuncao: idFuncao
-        }
-    })
+        await tx.funcionarioFuncao.create({
+            data: {
+                Funcionario_idFuncionario: funcionario.idFuncionario,
+                Funcao_idFuncao: idFuncao
+            }
+        })
 
-    return funcionario
+        return funcionario
+    })
 }   
 
 export async function createFunction(nome) {
