@@ -22,10 +22,10 @@ router.get("/get", async (req, res) => {
 })
 
 router.post("/create", async (req, res) => {
-    const { modelo, marca, cor, placa, capacidade, idTipoCarro } = req.body
+    const { modelo, marca, cor, placa, capacidade, tipoCarro } = req.body
     
     try {
-        const car = await CarService.createCar( modelo, marca, cor, placa, capacidade, idTipoCarro )
+        const car = await CarService.createCar( modelo, marca, cor, placa, capacidade, tipoCarro )
 
         return res.status(201).json({
             error: false,
