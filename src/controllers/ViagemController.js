@@ -145,4 +145,27 @@ router.post("/create", async (req, res) => {
     }
 })
 
+router.put("/cancel/:idSolicitacao", async (req, res) => {
+    const { idSolicitacao } = req.params
+    const { motivo } = req.body
+
+    console.log(motivo)
+
+    try {
+        const requestUpdated = await ViagemService.cancelRequest(Number(idSolicitacao), motivo)
+
+        return res.json({
+            error: false,
+            message: 'Solicitação cancelada com sucesso!',
+            requestUpdated
+        })
+    } catch (error) {
+        console.error(`Erro ao cancelar viagem: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao cancelar viagem: ${error.message}`
+        })
+    }
+})
+
 export default router

@@ -193,3 +193,35 @@ export async function createViagem(idCarro, idFuncionario, idsSolicitacoes, data
     return viagem;
   });
 }
+
+export async function cancelRequest(idRequest, motivo) {
+  if (!idRequest || !motivo) {
+    throw new Error("Erro: Dados não informados!")
+  } 
+
+  const requestExists = await prisma.solicitacaoViagem.findUnique({
+    where: {
+      idSolicitacaoViagem: idRequest
+    }
+  })
+
+  if (!requestExists) {
+    throw new Error("Erro: Nenhuma solicitação encontrada com este ID!")
+  }
+
+  if (requestExists && !motivo) {
+    throw new Error("Erro: O motivo do cancelamento é obrigatório!")
+  }
+
+  const requestUpdated = await prisma.solicitacaoViagem.update({
+    where: {
+      idSolicitacaoViagem: idRequest
+    },
+    data: {
+      StatusSolicitacao: 'CANCELADA',
+      motivo_cancelamento: motivo
+    }
+  })
+
+  return requestUpdated
+}
