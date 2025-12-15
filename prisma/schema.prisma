@@ -5,6 +5,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./generated"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 } 
 
 datasource db {
@@ -71,7 +72,7 @@ enum CategoriaNoticia {
 
 // Usuário geral do sistema (pacientes, cidadãos, funcionários)
 model Usuario {
-  idUsuario          Int           @id @default(autoincrement())
+  idUsuario          String           @id @default(uuid())
   primeiroNome       String
   sobrenome          String
   cpf                String        @unique @db.Char(11)
@@ -90,8 +91,8 @@ model Usuario {
 
 // Funcionário (ex.: motorista, administrativo etc.)
 model Funcionario {
-  idFuncionario     Int                 @id @default(autoincrement())
-  Usuario_idUsuario Int
+  idFuncionario     String                 @id @default(uuid())
+  Usuario_idUsuario String
   pis               Int?
   matricula         Int?
 
@@ -104,15 +105,15 @@ model Funcionario {
 
 // Funções atribuídas aos funcionários
 model Funcao {
-  idFuncao          Int                 @id @default(autoincrement())
+  idFuncao          String                 @id @default(uuid())
   nome              String
   FuncionarioFuncao FuncionarioFuncao[]
 }
 
 // Tabela pivot Funcionario <-> Função
 model FuncionarioFuncao {
-  Funcionario_idFuncionario Int
-  Funcao_idFuncao           Int
+  Funcionario_idFuncionario String
+  Funcao_idFuncao           String
 
   Funcao      Funcao      @relation(fields: [Funcao_idFuncao], references: [idFuncao], onDelete: Cascade)
   Funcionario Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade)
@@ -127,8 +128,8 @@ model FuncionarioFuncao {
 
 // Solicitação genérica (pode ser viagem, consulta, ouvidoria...)
 model Solicitacao {
-  idSolicitacao             Int                 @id @default(autoincrement())
-  Usuario_idUsuario         Int
+  idSolicitacao             String                 @id @default(uuid())
+  Usuario_idUsuario         String
   primeiro_nome_solicitante String
   sobrenome_solicitante     String
   email_solicitante         String
@@ -148,8 +149,8 @@ model Solicitacao {
 // -----------------------------------------------------
 
 model MensagemOuvidoria {
-  idMensagemOuvidoria        Int                        @id @default(autoincrement())
-  Solicitacao_idSolicitacao  Int
+  idMensagemOuvidoria        String                        @id @default(uuid())
+  Solicitacao_idSolicitacao  String
   assunto                    String
   mensagem                   String
   nomeSolicitante            String?
@@ -168,7 +169,7 @@ model MensagemOuvidoria {
 // -----------------------------------------------------
 
 model UnidadeUbs {
-  idUnidadeUbs            Int                       @id @default(autoincrement())
+  idUnidadeUbs            String                       @id @default(uuid())
   nome_unidade            String
   endereco_unidade        String
 
@@ -177,15 +178,15 @@ model UnidadeUbs {
 } 
 
 model Especialidade {
-  idEspecialidade         Int                       @id @default(autoincrement())
+  idEspecialidade         String                       @id @default(uuid())
   nome_especialidade      String
   EspecialidadeUnidadeUbs EspecialidadeUnidadeUbs[]
 } 
 
 // Pivot Especialidade <-> Unidade UBS
 model EspecialidadeUnidadeUbs {
-  Especialidade_idEspecialidade Int
-  UnidadeUbs_idUnidadeUbs       Int
+  Especialidade_idEspecialidade String
+  UnidadeUbs_idUnidadeUbs       String
 
   Especialidade Especialidade @relation(fields: [Especialidade_idEspecialidade], references: [idEspecialidade], onDelete: Cascade)
   UnidadeUbs    UnidadeUbs    @relation(fields: [UnidadeUbs_idUnidadeUbs], references: [idUnidadeUbs], onDelete: Cascade)
@@ -195,9 +196,9 @@ model EspecialidadeUnidadeUbs {
 } 
 
 model PedidoConsulta {
-  idPedidoConsulta          Int         @id @default(autoincrement())
-  UnidadeUbs_idUnidadeUbs   Int
-  Solicitacao_idSolicitacao Int
+  idPedidoConsulta          String         @id @default(uuid())
+  UnidadeUbs_idUnidadeUbs   String
+  Solicitacao_idSolicitacao String
 
   Solicitacao Solicitacao @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
   UnidadeUbs  UnidadeUbs  @relation(fields: [UnidadeUbs_idUnidadeUbs], references: [idUnidadeUbs])
@@ -212,7 +213,7 @@ model PedidoConsulta {
 
 // Pessoa que acompanha o paciente
 model Acompanhante {
-  idAcompanhante    Int                 @id @default(autoincrement())
+  idAcompanhante    String                 @id @default(uuid())
   nomeCompleto      String
   endereco          String
   telefone          String              @db.Char(11)
@@ -226,8 +227,8 @@ model Acompanhante {
 // Relação entre acompanhante e paciente (usuário)
 
 model AcompanhantePaciente {
-  Acompanhante_idAcompanhante Int
-  Usuario_idUsuario           Int
+  Acompanhante_idAcompanhante String
+  Usuario_idUsuario           String
 
   Acompanhante Acompanhante @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante], onDelete: Cascade)
   Usuario      Usuario      @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
@@ -238,10 +239,10 @@ model AcompanhantePaciente {
 
 // Solicitações de viagem (subtipo de Solicitação)
 model SolicitacaoViagem {     
-  idSolicitacaoViagem         Int                     @id @default(autoincrement())
-  Solicitacao_idSolicitacao   Int
-  Acompanhante_idAcompanhante Int?
-  Viagem_idViagem             Int?
+  idSolicitacaoViagem         String                     @id @default(uuid())
+  Solicitacao_idSolicitacao   String
+  Acompanhante_idAcompanhante String?
+  Viagem_idViagem             String?
   endereco_paciente           String
   local_consulta              String
   cidade_consulta             String
@@ -251,7 +252,6 @@ model SolicitacaoViagem {
   motivo_cancelamento         String? 
   
   StatusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
-  Parada        Parada[]
   Acompanhante  Acompanhante? @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante])
   Solicitacao   Solicitacao   @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
   Viagem        Viagem?       @relation(fields: [Viagem_idViagem], references: [idViagem])
@@ -263,13 +263,12 @@ model SolicitacaoViagem {
 
 // Viagem (quando uma solicitação vira um transporte real)
 model Viagem {
-  idViagem                  Int                 @id @default(autoincrement())
-  Funcionario_idFuncionario Int
-  Carro_idCarro             Int
+  idViagem                  String                 @id @default(uuid())
+  Funcionario_idFuncionario String
+  Carro_idCarro             String
   dataPartida               DateTime
   enderecoLocalPartida      String
   
-  Parada            Parada[]
   SolicitacaoViagem SolicitacaoViagem[]
   Carro             Carro      @relation(fields: [Carro_idCarro], references: [idCarro])
   Funcionario       Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade)
@@ -278,23 +277,23 @@ model Viagem {
   @@index([Funcionario_idFuncionario])
 }
 
-// Pontos de parada de uma viagem
-model Parada {
-  idParada                              Int @id @default(autoincrement())
-  SolicitacaoViagem_idSolicitacaoViagem Int
-  Viagem_idViagem                       Int
-  endereco String
+// // Pontos de parada de uma viagem (REMOVER)
+// model Parada {
+//   idParada                              String @id @default(uuid())
+//   SolicitacaoViagem_idSolicitacaoViagem Int
+//   Viagem_idViagem                       Int
+//   endereco String
   
-  SolicitacaoViagem SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onDelete: Cascade)
-  Viagem            Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem])
+//   SolicitacaoViagem SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onDelete: Cascade)
+//   Viagem            Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem])
 
-  @@index([SolicitacaoViagem_idSolicitacaoViagem])
-  @@index([Viagem_idViagem])
-}
+//   @@index([SolicitacaoViagem_idSolicitacaoViagem])
+//   @@index([Viagem_idViagem])
+// }
 
 // Informações sobre os carros
 model Carro {
-  idCarro     Int         @id @default(autoincrement())
+  idCarro     String       @id @default(uuid())
   modelo      String
   marca       String
   cor         String
@@ -311,7 +310,7 @@ model Carro {
 // -----------------------------------------------------
 
 model Curso {
-  idCurso        Int      @id @default(autoincrement())
+  idCurso        String      @id @default(uuid())
   titulo         String
   descricao      String
   local_curso    String
@@ -322,7 +321,7 @@ model Curso {
 }
 
 model Evento {
-  idEvento       Int      @id @default(autoincrement())
+  idEvento       String      @id @default(uuid())
   titulo         String
   descricao      String
   local_evento   String
@@ -334,21 +333,15 @@ model Evento {
 }
 
 // -----------------------------------------------------
-// TAXISTAS
+// TAXISTAS (REMOVER)
 // -----------------------------------------------------
-
-model Taxista {
-  idTaxista        Int    @id @default(autoincrement())
-  nome_taxista     String
-  telefone_taxista String
-}
 
 // -----------------------------------------------------
 // NOTÍCIAS
 // -----------------------------------------------------
 
 model Noticia {
-  id        Int              @id @default(autoincrement())
+  idNoticia String              @id @default(uuid())
   titulo    String
   corpo     String
   imagemUrl String

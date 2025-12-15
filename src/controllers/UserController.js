@@ -26,7 +26,7 @@ router.put("/update/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
     try {
         const { primeiroNome, sobrenome, cpf, telefone, email, endereco } = req.body
-        const updatedUser = await UserService.updateUser(Number(idUsuario), primeiroNome, sobrenome, cpf, telefone, email, endereco)
+        const updatedUser = await UserService.updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefone, email, endereco)
         
         return res.json({
             error: false,
@@ -46,7 +46,7 @@ router.delete("/delete/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
 
     try {
-        const userDeleted = await UserService.deleteUser(Number(idUsuario))
+        const userDeleted = await UserService.deleteUser(idUsuario)
 
         return res.json({
             error: false,

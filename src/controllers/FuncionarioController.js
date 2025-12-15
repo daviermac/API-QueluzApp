@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
     const { idUsuario, idFuncao, pis, matricula } = req.body
 
     try {
-        const funcionario = await FuncionarioServices.createFuncionario(Number(idUsuario), pis, matricula, Number(idFuncao))
+        const funcionario = await FuncionarioServices.createFuncionario(idUsuario, pis, matricula, idFuncao)
 
         return res.json({
             error: false,

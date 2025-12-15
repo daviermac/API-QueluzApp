@@ -41,7 +41,9 @@ export async function createCourse(titulo, descricao, local_curso, imagem_url, i
 }
 
 export async function editCourse(cursoId, titulo, descricao, local_curso, imagem_url, intervalo_datas) {
-    
+
 }
 
-export async function deleteCourse() {}
+export async function deleteCourse() {
+
+}

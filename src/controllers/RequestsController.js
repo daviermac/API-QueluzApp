@@ -7,7 +7,7 @@ router.get("/get/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
 
     try {
-        const requestsWithSignedUrls = await RequestsService.listRequestsByUser(Number(idUsuario))
+        const requestsWithSignedUrls = await RequestsService.listRequestsByUser(idUsuario)
 
         res.json({
             error: false,

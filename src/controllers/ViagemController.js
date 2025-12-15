@@ -4,24 +4,24 @@ import { getSignedUploadUrl } from '../config/S3.js'
 
 const router = express.Router()
 
-router.get("/companion/:idAcompanhante", async (req, res) => {
-    const { idAcompanhante } = req.params
+// router.get("/companion/:idAcompanhante", async (req, res) => {
+//     const { idAcompanhante } = req.params
 
-    try {
-        const companion = await ViagemService.getCompanionById(Number(idAcompanhante))
-        res.json({ 
-            error: false,
-            message: "Acompanhante encontrado com sucesso!", 
-            companion, 
-        });
-    } catch (error) {
-        console.error(`Erro ao buscar acompanhante: ${error.message}`)
-        res.status(400).json({
-            error: true,
-            message: `Erro ao buscar acompanhante: ${error.message}`
-        })
-    }
-})
+//     try {
+//         const companion = await ViagemService.getCompanionById(Number(idAcompanhante))
+//         res.json({ 
+//             error: false,
+//             message: "Acompanhante encontrado com sucesso!", 
+//             companion, 
+//         });
+//     } catch (error) {
+//         console.error(`Erro ao buscar acompanhante: ${error.message}`)
+//         res.status(400).json({
+//             error: true,
+//             message: `Erro ao buscar acompanhante: ${error.message}`
+//         })
+//     }
+// })
 
 router.get("/getRequests", async (req, res) => {
     try {
@@ -45,7 +45,7 @@ router.get("/getRequests/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
 
     try {
-        const requestsWithSignedUrls = await ViagemService.listViagemRequestsByUser(Number(idUsuario))
+        const requestsWithSignedUrls = await ViagemService.listViagemRequestsByUser(idUsuario)
 
         res.status(200).json({ 
             error: false,
@@ -152,7 +152,7 @@ router.put("/cancel/:idSolicitacao", async (req, res) => {
     console.log(motivo)
 
     try {
-        const requestUpdated = await ViagemService.cancelRequest(Number(idSolicitacao), motivo)
+        const requestUpdated = await ViagemService.cancelRequest(idSolicitacao, motivo)
 
         return res.json({
             error: false,
