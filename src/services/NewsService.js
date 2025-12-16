@@ -1,5 +1,5 @@
 import prisma from '../config/prisma.js'
-import { uploadNewsPhotoToS3 } from '../config/S3.js'
+import { getSignedDownloadUrl, uploadNewsPhotoToS3 } from '../config/S3.js'
 
 export async function createNews(title, body, fileBuffer, fileName, category, author) {
     try {
@@ -22,21 +22,38 @@ export async function createNews(title, body, fileBuffer, fileName, category, au
 }
 
 export async function listAllNews() {
-    const news = await prisma.noticia.findMany()
+    const news = await prisma.noticia.findMany({
+        orderBy: {
+            createdAt: 'desc'
+        }
+    })
 
-    return news
+    const newsWithImage = await Promise.all(
+        news.map(async (req) => {
+            const signedUrl = await getSignedDownloadUrl(req.imagemUrl)
+            return {
+                ...req,
+                link_imagem: signedUrl
+            }
+        })
+    )
+
+    return newsWithImage
 }
 
 export async function getNewsById(newsId) {
     const news = await prisma.noticia.findUnique({
         where: {
-            id: newsId
+            idNoticia: newsId
         }
     })
 
     if (!news) {
         throw new Error("Erro: notícia não encontrada!")
     }
+
+    const signedUrl = await getSignedDownloadUrl(news.imagemUrl)
+    news.link_imagem = signedUrl
 
     return news
 }
@@ -50,7 +67,7 @@ export async function editNews(newsId, title, body, fileBuffer, fileName, catego
 
     const updatedNews = await prisma.noticia.update({
         where: {
-            id: newsId
+            idNoticia: newsId
         },
         data: {
             titulo: title,
@@ -71,7 +88,7 @@ export async function deleteNews(newsId) {
 
     const deletedNews = await prisma.noticia.delete({
         where: {
-            id: newsId
+            idNoticia: newsId
         }
     })
 
