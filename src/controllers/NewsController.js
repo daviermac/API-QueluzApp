@@ -50,6 +50,10 @@ router.post("/create", upload.single("imagem-principal"), async (req, res) => {
 
 
 router.get("/get", async (req, res) => {
+    const auth = req.headers.authorization
+
+    console.log(auth)
+
     try {
         const news = await NewsService.listAllNews()
         return res.json({
