@@ -342,11 +342,11 @@ model Evento {
 
 model Noticia {
   idNoticia String              @id @default(uuid())
-  titulo    String
-  corpo     String
+  titulo    String              
+  corpo     String              @db.LongText
   imagemUrl String
   autor     String
   
   categoria CategoriaNoticia
-  createdAt DateTime         @default(now())
+  createdAt DateTime            @default(now())
 }

@@ -9,7 +9,7 @@ export async function createNews(title, body, fileBuffer, fileName, category, au
             data: {
                 titulo: title,
                 corpo: body,
-                imagem: key, // salva apenas o caminho
+                imagemUrl: key, // salva apenas o caminho
                 categoria: category,
                 autor: author
             }
@@ -23,16 +23,6 @@ export async function createNews(title, body, fileBuffer, fileName, category, au
 
 export async function listAllNews() {
     const news = await prisma.noticia.findMany()
-
-    return news
-}
-
-export async function listNewsByCategory(category) {
-    const news = await prisma.noticia.findMany({
-        where: {
-            categoria: category
-        }
-    })
 
     return news
 }
@@ -51,10 +41,12 @@ export async function getNewsById(newsId) {
     return news
 }
 
-export async function editNews(newsId, title, body, image, category, author) {
+export async function editNews(newsId, title, body, fileBuffer, fileName, category, author) {
     if (!newsId) {
         throw new Error("Erro: ID da notícia não informado!")
     }
+
+    const key = await uploadNewsPhotoToS3(fileBuffer, fileName)
 
     const updatedNews = await prisma.noticia.update({
         where: {
@@ -63,7 +55,7 @@ export async function editNews(newsId, title, body, image, category, author) {
         data: {
             titulo: title,
             corpo: body,
-            imagem: image,
+            imagemUrl: key,
             categoria: category,
             autor: author
         }

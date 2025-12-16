@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Noticia` MODIFY `titulo` VARCHAR(191) NOT NULL,
+    MODIFY `corpo` LONGTEXT NOT NULL;

@@ -4,9 +4,9 @@ import * as NewsService from '../services/NewsService.js'
 
 const router = express.Router()
 
-router.post("/", upload.single("imagem-principal"), async (req, res) => {
+router.post("/create", upload.single("imagem-principal"), async (req, res) => {
     try {
-        const { title, body, categoryId, author } = req.body
+        const { title, body, category, author } = req.body
 
         if (!req.file) {
             return res.status(400).json({
@@ -30,9 +30,9 @@ router.post("/", upload.single("imagem-principal"), async (req, res) => {
             body, 
             fileBuffer,
             fileName,
-            categoryId, 
+            category, 
             author
-        )
+    )
         
         return res.status(201).json({
             error: false,
@@ -49,7 +49,7 @@ router.post("/", upload.single("imagem-principal"), async (req, res) => {
 })
 
 
-router.get("/", async (req, res) => {
+router.get("/get", async (req, res) => {
     try {
         const news = await NewsService.listAllNews()
         return res.json({
@@ -65,25 +65,18 @@ router.get("/", async (req, res) => {
     }
 })
 
-router.post("/category", async (req, res) => {
+router.get("/get/:idNoticia", async (req, res) => {
+    const { idNoticia } = req.params
+
     try {
-        const { name } = req.body
+        const news = await NewsService.getNewsById(idNoticia)
         
-        if (!name) {
-            return res.status(400).json({
-                error: true,
-                message: 'Nome da categoria é obrigatório'
-            })
-        }
-        
-        const category = await NewsService.createCategory(name)
-        return res.status(201).json({
+        return res.json({
             error: false,
-            message: "Categoria criada com sucesso!",
-            data: category
+            data: news
         })
     } catch (error) {
-        console.error("Erro ao criar categoria", error.message)
+        console.error("Erro ao listar notícia", error.message)
         res.status(500).json({
             error: true,
             message: error.message
@@ -91,15 +84,21 @@ router.post("/category", async (req, res) => {
     }
 })
 
-router.get("/category", async (req, res) => {
+router.patch("/edit/:idNoticia", upload.single("imagem-principal"), async (req, res) => {
+    const { idNoticia } = req.params
+    const { title, body, category, author } = req.body
+    const fileBuffer = req.file.buffer
+    const fileName = req.file.originalname
+
     try {
-        const categories = await NewsService.listAllCategories()
+        const updatedNews = await NewsService.editNews(idNoticia, title, body, fileBuffer, fileName, category, author)
+
         return res.json({
             error: false,
-            data: categories
+            data: updatedNews
         })
     } catch (error) {
-        console.error("Erro ao listar categorias", error.message)
+        console.error("Erro ao editar notícia", error.message)
         res.status(500).json({
             error: true,
             message: error.message
@@ -107,25 +106,18 @@ router.get("/category", async (req, res) => {
     }
 })
 
-router.delete("/category/:id", async (req, res) => {
+router.delete("/delete/:idNoticia", async (req, res) => {
+    const { idNoticia } = req.params
+    
     try {
-        const { id } = req.params
-        
-        if (!id) {
-            return res.status(400).json({
-                error: true,
-                message: 'ID da categoria é obrigatório'
-            })
-        }
-        
-        const category = await NewsService.deleteCategory(parseInt(id))
+        const deletedNews = await NewsService.deleteNews(idNoticia)
+
         return res.json({
             error: false,
-            message: "Categoria deletada com sucesso!",
-            data: category
+            data: deletedNews
         })
     } catch (error) {
-        console.error("Erro ao deletar categoria", error.message)
+        console.error("Erro ao excluir notícia", error.message)
         res.status(500).json({
             error: true,
             message: error.message
