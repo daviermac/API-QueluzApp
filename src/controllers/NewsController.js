@@ -1,6 +1,7 @@
 import express from 'express'
 import upload from '../config/multer.js'
 import * as NewsService from '../services/NewsService.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
@@ -52,7 +53,9 @@ router.post("/create", upload.single("imagem-principal"), async (req, res) => {
 router.get("/get", async (req, res) => {
     const auth = req.headers.authorization
 
-    console.log(auth)
+    if (auth) {
+        console.log("Token recebido com sucesso!")
+    } 
 
     try {
         const news = await NewsService.listAllNews()

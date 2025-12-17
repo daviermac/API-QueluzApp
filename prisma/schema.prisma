@@ -58,13 +58,28 @@ enum TipoSolicitacao {
 }
 
 // Categoria das notícias do portal
+
 enum CategoriaNoticia {
   SAUDE
   EDUCACAO
   INFRAESTRUTURA
   CULTURA
   ESPORTE
+  ADMINISTRACAO_PUBLICA @map("ADMINISTRAÇÃO PÚBLICA")
+  SERVICOS
+  OBRAS
+  TRANSPORTE
+  ASSISTENCIA_SOCIAL    @map("ASSISTÊNCIA SOCIAL")
+  SEGURANCA
+  HABITACAO
+  ECONOMIA
+  EMPREGOS
+  LICITACOES
+  EVENTOS
+  TURISMO
+  MEIO_AMBIENTE         @map("MEIO AMBIENTE")
 }
+
 
 // -----------------------------------------------------
 // USUÁRIO, FUNCIONÁRIO E FUNÇÕES
