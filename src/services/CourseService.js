@@ -34,7 +34,7 @@ export async function createCourse(titulo, descricao, local_curso, imagem_url, i
         descricao,
         local_curso,
         imagem_capa: imagem_url,
-        intervalo_datas
+        intervalo_datas,
     })
 
     return curso

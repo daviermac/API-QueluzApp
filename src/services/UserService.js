@@ -29,7 +29,8 @@ export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, 
             cpf,
             telefone,
             email,
-            endereco
+            endereco,
+            createdAt: new Date()
         }
     })
 

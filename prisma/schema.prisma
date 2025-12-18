@@ -60,23 +60,24 @@ enum TipoSolicitacao {
 // Categoria das notícias do portal
 
 enum CategoriaNoticia {
-  SAUDE
-  EDUCACAO
-  INFRAESTRUTURA
-  CULTURA
-  ESPORTE
-  ADMINISTRACAO_PUBLICA @map("ADMINISTRAÇÃO PÚBLICA")
-  SERVICOS
-  OBRAS
-  TRANSPORTE
-  ASSISTENCIA_SOCIAL    @map("ASSISTÊNCIA SOCIAL")
+  SAUDE 
+  EDUCACAO 
+  INFRAESTRUTURA // 1
+  CULTURA // 3
+  ESPORTE // 3
+  ADMINISTRACAO_PUBLICA @map("ADMINISTRAÇAO PUBLICA") // 2
+  DESENVOLVIMENTO_ECONOMICO @map("DESENVOLVIMENTO ECONOMICO")
+  SERVICOS // 1
+  OBRAS // 1
+  TRANSPORTE // 1
+  ASSISTENCIA_SOCIAL    @map("ASSISTENCIA SOCIAL")
   SEGURANCA
-  HABITACAO
-  ECONOMIA
-  EMPREGOS
-  LICITACOES
-  EVENTOS
-  TURISMO
+  HABITACAO // 1
+  ECONOMIA // 2
+  EMPREGOS // 2
+  LICITACOES // 2
+  EVENTOS // 3
+  TURISMO // 3
   MEIO_AMBIENTE         @map("MEIO AMBIENTE")
 }
 
@@ -97,7 +98,7 @@ model Usuario {
   endereco           String
   telefoneConfirmado Boolean       @default(false)
   emailConfirmado    Boolean       @default(false)
-  createdAt          DateTime      @default(now())
+  createdAt          DateTime      @db.Date
   AcompanhantePaciente AcompanhantePaciente[]
 
   Funcionario Funcionario[]
@@ -281,7 +282,8 @@ model Viagem {
   idViagem                  String                 @id @default(uuid())
   Funcionario_idFuncionario String
   Carro_idCarro             String
-  dataPartida               DateTime
+  dataPartida               DateTime               @db.Date
+  horaPartida               DateTime               @db.Time(0)
   enderecoLocalPartida      String
   
   SolicitacaoViagem SolicitacaoViagem[]
@@ -330,8 +332,8 @@ model Curso {
   descricao      String
   local_curso    String
   imagem_capa    String
-  criado_em      DateTime @default(now())
-  ativo          Boolean  @default(true)
+  criado_em      DateTime     @db.Date
+  ativo          Boolean      @default(true)
   IntervaloDatas String
 }
 
@@ -341,8 +343,8 @@ model Evento {
   descricao      String
   local_evento   String
   imagem_capa    String
-  criado_em      DateTime @default(now())
-  ativo          Boolean  @default(true)
+  criado_em      DateTime     @db.Date
+  ativo          Boolean      @default(true)
   mesInicio      Int
   IntervaloDatas String
 }
@@ -361,7 +363,7 @@ model Noticia {
   corpo     String              @db.LongText
   imagemUrl String
   autor     String
-  
+  publicadaEm DateTime          @db.Date
+
   categoria CategoriaNoticia
-  createdAt DateTime            @default(now())
 }

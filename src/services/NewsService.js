@@ -11,7 +11,8 @@ export async function createNews(title, body, fileBuffer, fileName, category, au
                 corpo: body,
                 imagemUrl: key, // salva apenas o caminho
                 categoria: category,
-                autor: author
+                autor: author,
+                publicadaEm: new Date()
             }
         })
 
@@ -24,7 +25,7 @@ export async function createNews(title, body, fileBuffer, fileName, category, au
 export async function listAllNews() {
     const news = await prisma.noticia.findMany({
         orderBy: {
-            createdAt: 'desc'
+            publicadaEm: 'desc'
         }
     })
 

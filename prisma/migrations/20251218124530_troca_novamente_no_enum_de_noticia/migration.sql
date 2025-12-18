@@ -1,0 +1,8 @@
+/*
+  Warnings:
+
+  - The values [ADMINISTRAÇÃO PÚBLICA,DESENVOLVIMENTO ECONÔMICO,ASSISTÊNCIA SOCIAL] on the enum `Noticia_categoria` will be removed. If these variants are still used in the database, this will fail.
+
+*/
+-- AlterTable
+ALTER TABLE `Noticia` MODIFY `categoria` ENUM('SAUDE', 'EDUCACAO', 'INFRAESTRUTURA', 'CULTURA', 'ESPORTE', 'ADMINISTRAÇAO PUBLICA', 'DESENVOLVIMENTO ECONOMICO', 'SERVICOS', 'OBRAS', 'TRANSPORTE', 'ASSISTENCIA SOCIAL', 'SEGURANCA', 'HABITACAO', 'ECONOMIA', 'EMPREGOS', 'LICITACOES', 'EVENTOS', 'TURISMO', 'MEIO AMBIENTE') NOT NULL;
