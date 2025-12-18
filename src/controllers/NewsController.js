@@ -49,7 +49,6 @@ router.post("/create", upload.single("imagem-principal"), async (req, res) => {
     }
 })
 
-
 router.get("/get", async (req, res) => {
     const auth = req.headers.authorization
 
@@ -59,6 +58,22 @@ router.get("/get", async (req, res) => {
 
     try {
         const news = await NewsService.listAllNews()
+        return res.json({
+            error: false,
+            data: news
+        })
+    } catch (error) {
+        console.error("Erro ao listar notícias", error.message)
+        res.status(500).json({
+            error: true,
+            message: error.message
+        })
+    }
+})
+
+router.get("/getFirstFive", async (req, res) => {
+    try {
+        const news = await NewsService.listFirstFiveNews()
         return res.json({
             error: false,
             data: news

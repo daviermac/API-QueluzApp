@@ -330,8 +330,8 @@ model Curso {
   idCurso        String      @id @default(uuid())
   titulo         String
   descricao      String
-  local_curso    String
   imagem_capa    String
+  link_inscricao String
   criado_em      DateTime     @db.Date
   ativo          Boolean      @default(true)
   IntervaloDatas String

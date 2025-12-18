@@ -1,9 +1,9 @@
 import prisma from '../config/prisma.js'
-import { getSignedDownloadUrl, uploadNewsPhotoToS3 } from '../config/S3.js'
+import { getSignedDownloadUrl, uploadPhotoToS3 } from '../config/S3.js'
 
 export async function createNews(title, body, fileBuffer, fileName, category, author) {
     try {
-        const key = await uploadNewsPhotoToS3(fileBuffer, fileName)
+        const key = await uploadPhotoToS3("news", fileBuffer, fileName)
 
         const news = await prisma.noticia.create({
             data: {
@@ -42,6 +42,27 @@ export async function listAllNews() {
     return newsWithImage
 }
 
+export async function listFirstFiveNews() {
+    const newsList = await prisma.noticia.findMany({
+        orderBy: {
+            publicadaEm: 'desc'
+        },
+        take: 5
+    })
+
+    const newsWithImage = await Promise.all(
+        newsList.map(async (req) => {
+            const signedUrl = await getSignedDownloadUrl(req.imagemUrl)
+            return {
+                ...req,
+                link_imagem: signedUrl
+            }
+        })
+    )
+
+    return newsWithImage
+}
+
 export async function getNewsById(newsId) {
     const news = await prisma.noticia.findUnique({
         where: {
@@ -64,7 +85,7 @@ export async function editNews(newsId, title, body, fileBuffer, fileName, catego
         throw new Error("Erro: ID da notícia não informado!")
     }
 
-    const key = await uploadNewsPhotoToS3(fileBuffer, fileName)
+    const key = await uploadPhotoToS3("news", fileBuffer, fileName)
 
     const updatedNews = await prisma.noticia.update({
         where: {

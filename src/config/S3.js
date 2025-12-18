@@ -18,8 +18,8 @@ export async function getSignedUploadUrl(fileKey) {
     return await getSignedUrl(s3Client, command, { expiresIn: 60 })
 }   
 
-export async function uploadNewsPhotoToS3(fileBuffer, fileName, contentType) {
-    const key = `news/${Date.now()}-${fileName}`
+export async function uploadPhotoToS3(directory, fileBuffer, fileName, contentType) {
+    const key = `${directory}}/${Date.now()}-${fileName}`
     const command = new PutObjectCommand({
         Bucket: bucket,
         Key: key,
