@@ -19,7 +19,7 @@ export async function getSignedUploadUrl(fileKey) {
 }   
 
 export async function uploadPhotoToS3(directory, fileBuffer, fileName, contentType) {
-    const key = `${directory}}/${Date.now()}-${fileName}`
+    const key = `${directory}/${Date.now()}-${fileName}`
     const command = new PutObjectCommand({
         Bucket: bucket,
         Key: key,
