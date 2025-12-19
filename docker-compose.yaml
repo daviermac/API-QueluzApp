@@ -1,16 +1,4 @@
 services:
-  api:
-    build: .
-    container_name: api-queluzapp
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
-    depends_on:
-      - db
-    volumes:
-      - /app/node_modules
-    
   db:
     image: mysql:8.0
     container_name: mysql_local
@@ -21,7 +9,7 @@ services:
       MYSQL_USER: devuser
       MYSQL_PASSWORD: devpass
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password

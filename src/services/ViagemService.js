@@ -1,6 +1,4 @@
 import prisma from "../config/prisma.js";
-import path from 'path'
-
 import parseDateBR from "../helpers/parseDateBR.js";
 import parseHoraBR from "../helpers/parseHoraBR.js";
 
