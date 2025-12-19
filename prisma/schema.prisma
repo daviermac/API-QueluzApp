@@ -103,6 +103,7 @@ model Usuario {
 
   Funcionario Funcionario[]
   Solicitacao Solicitacao[]
+  
 }
 
 // Funcionário (ex.: motorista, administrativo etc.)
