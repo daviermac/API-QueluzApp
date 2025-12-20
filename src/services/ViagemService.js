@@ -144,7 +144,7 @@ export async function createViagem(idCarro, idFuncionario, idsSolicitacoes, data
   if (!idCarro || !idFuncionario || !dataPartida || !enderecoLocalPartida) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
   }
-
+           
   if (!Array.isArray(idsSolicitacoes) || idsSolicitacoes.length === 0) {
     throw new Error("Erro: É necessário informar ao menos uma solicitação!");
   }
