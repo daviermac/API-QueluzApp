@@ -23,6 +23,24 @@ router.get("/get", async (req, res) => {
     }
 })
 
+router.get("/getFirstTwo", async (req, res) => {
+    try {
+        const events = await EventServices.listFirstTwoEvents()
+
+        res.json({
+            error: false,
+            message: "Eventos listados com sucesso!",
+            events
+        })
+    } catch (error) {
+        console.error(`Erro ao listar eventos: ${error.message}`)
+        res.status(500).json({
+            error: true,
+            message: `Erro ao listar eventos: ${error.message}!`
+        })
+    }
+})
+
 router.get("/get/:eventId", async (req, res) => {
     const { eventId } = req.params
 
@@ -53,12 +71,12 @@ router.post("/create", upload.fields([{ name: "imagem_chamada", maxCount: 1 }, {
     const chamadaNome = req.files.imagem_chamada?.[0].originalname
 
     try {
-        const eventCreated = await EventServices.createEvent(titulo, descricao, local_evento, chamadaBuffer, chamadaNome, capaBuffer, capaNome, criado_em, mesInicio, anoInicio, intervaloDatas)
+        const eventCreated = await EventServices.createEvent(titulo, descricao, local_evento, chamadaBuffer, chamadaNome, capaBuffer, capaNome, criado_em, Number(mesInicio), Number(anoInicio), intervaloDatas)
         
         res.json({
-            error: false,
-            message: "Curso criado com sucesso!",
-            eventCreated
+             error: false,
+             message: "Curso criado com sucesso!",
+             eventCreated
         })
     } catch (error) {
         console.error(`Erro ao criar evento: ${error.message}`)
@@ -92,3 +110,5 @@ router.put("/inactivate/:eventId", async (req, res) => {
         })
     }
 })
+
+export default router

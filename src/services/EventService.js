@@ -1,16 +1,61 @@
 import prisma from '../config/prisma.js'
-import { uploadPhotoToS3 } from '../config/S3.js'
+import { getSignedDownloadUrl, uploadPhotoToS3 } from '../config/S3.js'
 
 export async function listAllEvents() {
     const events = await prisma.evento.findMany()
 
-    return events
+    const eventsWithImage = await Promise.all(
+        events.map(async (req) => {
+            const chamadaSignedUrl = await getSignedDownloadUrl(req.imagem_chamada)
+            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
+            
+            return {
+                ...req,
+                imagem_chamada_link: chamadaSignedUrl,
+                imagem_capa_link: capaSignedUrl
+            }
+        })
+    )
+
+    return eventsWithImage
+}
+
+export async function listFirstTwoEvents() {
+    const events = await prisma.evento.findMany({
+        take: 2
+    })
+
+    const eventsWithImage = await Promise.all(
+        events.map(async (req) => {
+            const chamadaSignedUrl = await getSignedDownloadUrl(req.imagem_chamada)
+            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
+            
+            return {
+                ...req,
+                imagem_chamada_link: chamadaSignedUrl,
+                imagem_capa_link: capaSignedUrl
+            }
+        })
+    )
+
+    return eventsWithImage
 }
 
 export async function listEventById(eventId) {
     if (!eventId) {
         throw new Error("Erro: !")
     }
+
+    const event = await prisma.evento.findUnique({
+        where: {
+            idEvento: eventId
+        }
+    })
+
+    event.chamadaSignedUrl = await getSignedDownloadUrl(event.imagem_chamada)
+    event.capaSignedUrl = await getSignedDownloadUrl(event.imagem_capa)    
+
+    return event
 }
 
 export async function createEvent(titulo, descricao, local_evento, imagem_chamada_buffer, imagem_chamada_name, imagem_capa_buffer, imagem_capa_name, criado_em, mesInicio, anoInicio, intervaloDatas) {
@@ -32,7 +77,7 @@ export async function createEvent(titulo, descricao, local_evento, imagem_chamad
             local_evento,
             imagem_chamada,
             imagem_capa,
-            criado_em,
+            criado_em: new Date(),
             mesInicio,
             anoInicio,
             IntervaloDatas: intervaloDatas

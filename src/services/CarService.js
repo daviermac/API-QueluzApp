@@ -4,7 +4,6 @@ export async function createCar(modelo, marca, cor, placa, capacidade, tipoCarro
     if (!modelo || !cor || !marca || !placa || !capacidade || !tipoCarro) {
         throw new Error("Todos os dados são obrigatórios!")
     }
-
     const car = await prisma.carro.create({
         data: {
             modelo,

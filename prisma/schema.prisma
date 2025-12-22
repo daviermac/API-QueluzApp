@@ -20,8 +20,8 @@ datasource db {
 // Status atual do carro disponível para viagens
 enum StatusCarro {
   DISPONIVEL
-  EM_USO        @map("EM USO")
-  EM_MANUTENCAO @map("EM MANUTENCAO")
+  EM_USO        
+  EM_MANUTENCAO
 } 
 
 // Classificação dos veículos
@@ -341,7 +341,7 @@ model Curso {
 model Evento {
   idEvento          String      @id @default(uuid())
   titulo            String
-  descricao         String
+  descricao         String      @db.LongText
   local_evento      String
   imagem_chamada    String
   imagem_capa       String
