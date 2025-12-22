@@ -339,15 +339,17 @@ model Curso {
 }
 
 model Evento {
-  idEvento       String      @id @default(uuid())
-  titulo         String
-  descricao      String
-  local_evento   String
-  imagem_capa    String
-  criado_em      DateTime     @db.Date
-  ativo          Boolean      @default(true)
-  mesInicio      Int
-  IntervaloDatas String
+  idEvento          String      @id @default(uuid())
+  titulo            String
+  descricao         String
+  local_evento      String
+  imagem_chamada    String
+  imagem_capa       String
+  criado_em         DateTime     @db.Date 
+  ativo             Boolean      @default(true)
+  mesInicio         Int
+  anoInicio         Int
+  IntervaloDatas    String
 }
 
 // -----------------------------------------------------
