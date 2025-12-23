@@ -25,21 +25,30 @@ export async function listCourseById(cursoId) {
     return curso
 }
 
-export async function createCourse(titulo, descricao, local_curso, fileBuffer, fileName, intervalo_datas) {
-    if (!titulo, !descricao, !local_curso, !imagem_capa, !intervalo_datas) {
-        throw new Error("Erro: Todos os campos são obrigatórios!")
+export async function createCourse(nome, titulo, descricao, link_inscricao, imagem_chamada_buffer, imagem_chamada_name, imagem_capa_buffer, imagem_capa_name) {
+    if (!titulo, !descricao, !link_inscricao, !imagem_chamada_buffer, !imagem_chamada_name, !imagem_capa_buffer, !imagem_capa_name) {
+        throw new Error("Erro: Todos os dados devem ser informados!")
+    }
+    
+    const imagem_chamada = await uploadPhotoToS3("courses/imagem_chamada", imagem_chamada_buffer, imagem_chamada_name)
+    const imagem_capa = await uploadPhotoToS3("courses/imagem_capa", imagem_capa_buffer, imagem_capa_name)
+
+    if (!imagem_capa || !imagem_chamada) {
+        throw new Error("Erro: erro ao criar imagens!")
     }
 
-    const curso = await prisma.curso.create({
-        titulo,
-        descricao,
-        local_curso,
-        imagem_capa: imagem_url,
-        intervalo_datas,
+    const course = await prisma.curso.create({
+        data: {
+            titulo,
+            descricao,
+            link_inscricao,
+            imagem_principal: imagem_chamada,
+            imagem_capa
+        }
     })
-
-    return curso
-}
+    
+    return course
+}   
 
 export async function editCourse(cursoId, titulo, descricao, local_curso, fileBuffer, fileName, intervalo_datas) {
     if (!cursoId) {

@@ -58,8 +58,8 @@ export async function listEventById(eventId) {
     return event
 }
 
-export async function createEvent(titulo, descricao, local_evento, imagem_chamada_buffer, imagem_chamada_name, imagem_capa_buffer, imagem_capa_name, criado_em, mesInicio, anoInicio, intervaloDatas) {
-    if (!titulo, !descricao, !local_evento, !imagem_chamada_buffer, !imagem_chamada_name, !imagem_capa_buffer, !imagem_capa_name, !criado_em, !mesInicio, !anoInicio, !intervaloDatas) {
+export async function createEvent(titulo, descricao, local_evento, imagem_chamada_buffer, imagem_chamada_name, imagem_capa_buffer, imagem_capa_name, mesInicio, anoInicio, intervaloDatas) {
+    if (!titulo, !descricao, !local_evento, !imagem_chamada_buffer, !imagem_chamada_name, !imagem_capa_buffer, !imagem_capa_name, !mesInicio, !anoInicio, !intervaloDatas) {
         throw new Error("Erro: Todos os dados devem ser informados!")
     }
     
