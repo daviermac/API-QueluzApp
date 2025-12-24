@@ -1,23 +1,17 @@
 import prisma from '../config/prisma.js'
 import { getSignedDownloadUrl, uploadPhotoToS3 } from '../config/S3.js'
 
+const public_bucket_url = process.env.PUBLIC_BUCKET_URL
+
 export async function listAllEvents() {
     const events = await prisma.evento.findMany()
 
-    const eventsWithImage = await Promise.all(
-        events.map(async (req) => {
-            const chamadaSignedUrl = await getSignedDownloadUrl(req.imagem_chamada)
-            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
-            
-            return {
-                ...req,
-                imagem_chamada_link: chamadaSignedUrl,
-                imagem_capa_link: capaSignedUrl
-            }
-        })
-    )
+    events.map(event => {
+        event.imagem_capa = `${public_bucket_url}/${event.imagem_capa}`
+        event.imagem_chamada = `${public_bucket_url}/${event.imagem_chamada}`
+    })
 
-    return eventsWithImage
+    return events
 }
 
 export async function listFirstTwoEvents() {
@@ -25,20 +19,12 @@ export async function listFirstTwoEvents() {
         take: 2
     })
 
-    const eventsWithImage = await Promise.all(
-        events.map(async (req) => {
-            const chamadaSignedUrl = await getSignedDownloadUrl(req.imagem_chamada)
-            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
-            
-            return {
-                ...req,
-                imagem_chamada_link: chamadaSignedUrl,
-                imagem_capa_link: capaSignedUrl
-            }
-        })
-    )
+    events.map(event => {
+        event.imagem_capa = `${public_bucket_url}/${event.imagem_capa}`
+        event.imagem_chamada = `${public_bucket_url}/${event.imagem_chamada}`
+    })
 
-    return eventsWithImage
+    return events
 }
 
 export async function listEventById(eventId) {
@@ -52,8 +38,8 @@ export async function listEventById(eventId) {
         }
     })
 
-    event.chamadaSignedUrl = await getSignedDownloadUrl(event.imagem_chamada)
-    event.capaSignedUrl = await getSignedDownloadUrl(event.imagem_capa)    
+    event.imagem_capa = `${public_bucket_url}/${event.imagem_capa}`
+    event.imagem_chamada = `${public_bucket_url}/${event.imagem_chamada}`   
 
     return event
 }

@@ -61,7 +61,7 @@ router.get("/get/:eventId", async (req, res) => {
 })
 
 router.post("/create", upload.fields([{ name: "imagem_chamada", maxCount: 1 }, { name: "imagem_capa", maxCount: 1 }]), async (req, res) => {
-    const { titulo, descricao, local_evento, criado_em, mesInicio, anoInicio, intervaloDatas } = req.body
+    const { titulo, descricao, local_evento, mesInicio, anoInicio, intervaloDatas } = req.body
     
     const capaBuffer = req.files.imagem_capa?.[0].buffer
     const chamadaBuffer = req.files.imagem_chamada?.[0].buffer
@@ -70,7 +70,7 @@ router.post("/create", upload.fields([{ name: "imagem_chamada", maxCount: 1 }, {
     const chamadaNome = req.files.imagem_chamada?.[0].originalname
 
     try {
-        const eventCreated = await EventServices.createEvent(titulo, descricao, local_evento, chamadaBuffer, chamadaNome, capaBuffer, capaNome, criado_em, Number(mesInicio), Number(anoInicio), intervaloDatas)
+        const eventCreated = await EventServices.createEvent(titulo, descricao, local_evento, chamadaBuffer, chamadaNome, capaBuffer, capaNome, Number(mesInicio), Number(anoInicio), intervaloDatas)
         
         res.json({
              error: false,

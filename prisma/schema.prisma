@@ -328,13 +328,13 @@ model Carro {
 // -----------------------------------------------------
 
 model Curso {
-  idCurso             String      @id @default(uuid())
+  idCurso             String       @id @default(uuid())
   nome                String
   titulo              String
-  descricao           String      @db.LongText
+  descricao           String       @db.LongText
   imagem_capa         String
   imagem_principal    String
-  link_inscricao      String
+  link_inscricao      String       @db.LongText
   criado_em           DateTime     @db.Date
   ativo               Boolean      @default(true)
 }

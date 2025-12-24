@@ -1,6 +1,8 @@
 import prisma from '../config/prisma.js'
 import { getSignedDownloadUrl, uploadPhotoToS3 } from '../config/S3.js'
 
+const public_bucket_url = process.env.PUBLIC_BUCKET_URL
+
 export async function createNews(title, body, fileBuffer, fileName, category, author) {
     try {
         const key = await uploadPhotoToS3("news", fileBuffer, fileName)
@@ -29,17 +31,12 @@ export async function listAllNews() {
         }
     })
 
-    const newsWithImage = await Promise.all(
-        news.map(async (req) => {
-            const signedUrl = await getSignedDownloadUrl(req.imagemUrl)
-            return {
-                ...req,
-                link_imagem: signedUrl
-            }
-        })
-    )
+    news.map((news) => {
+        news.imagemUrl = `${public_bucket_url}/${news.imagemUrl}`
+    })
+    
 
-    return newsWithImage
+    return news
 }
 
 export async function listFirstFiveNews() {
@@ -50,17 +47,12 @@ export async function listFirstFiveNews() {
         take: 5
     })
 
-    const newsWithImage = await Promise.all(
-        newsList.map(async (req) => {
-            const signedUrl = await getSignedDownloadUrl(req.imagemUrl)
-            return {
-                ...req,
-                link_imagem: signedUrl
-            }
-        })
-    )
+    newsList.map((news) => {
+        news.imagemUrl = `${public_bucket_url}/${news.imagemUrl}`
+    })
+    
 
-    return newsWithImage
+    return newsList
 }
 
 export async function getNewsById(newsId) {
@@ -74,8 +66,7 @@ export async function getNewsById(newsId) {
         throw new Error("Erro: notícia não encontrada!")
     }
 
-    const signedUrl = await getSignedDownloadUrl(news.imagemUrl)
-    news.link_imagem = signedUrl
+    news.imagemUrl = `${public_bucket_url}/${news.imagemUrl}`
 
     return news
 }

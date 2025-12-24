@@ -1,23 +1,18 @@
 import prisma from '../config/prisma.js'
-import { getSignedDownloadUrl, uploadPhotoToS3 } from '../config/S3.js'
+import { uploadPhotoToS3 } from '../config/S3.js'
+
+const public_bucket_url = process.env.PUBLIC_BUCKET_URL
 
 export async function listCourses() {
     const cursos = await prisma.curso.findMany()
 
-    const coursesWithImage = await Promise.all(
-        cursos.map(async (req) => {
-            const principalSignedUrl = await getSignedDownloadUrl(req.imagem_principal)
-            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
-            
-            return {
-                ...req,
-                imagem_principal_link: principalSignedUrl,
-                imagem_capa_link: capaSignedUrl
-            }
-        })
-    )
+    cursos.map((curso) => {
+        curso.imagem_principal = `${public_bucket_url}/${curso.imagem_principal}`
+        curso.imagem_capa = `${public_bucket_url}/${curso.imagem_capa}`
+    })
+    
 
-    return coursesWithImage
+    return cursos
 }
 
 export async function listFirstThreeCourses() {
@@ -25,20 +20,12 @@ export async function listFirstThreeCourses() {
         take: 3
     })
 
-    const coursesWithImage = await Promise.all(
-        cursos.map(async (req) => {
-            const principalSignedUrl = await getSignedDownloadUrl(req.imagem_principal)
-            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
-            
-            return {
-                ...req,
-                imagem_principal_link: principalSignedUrl,
-                imagem_capa_link: capaSignedUrl
-            }
-        })
-    )
+    cursos.map((curso) => {
+        curso.imagem_principal = `${public_bucket_url}/${curso.imagem_principal}`
+        curso.imagem_capa = `${public_bucket_url}/${curso.imagem_capa}`
+    })
 
-    return coursesWithImage
+    return cursos
 }
 
 export async function listCourseById(cursoId) {
@@ -56,14 +43,10 @@ export async function listCourseById(cursoId) {
         throw new Error("Erro: Curso não existe!")
     }
 
-    const cursoComImage = {
-        ...curso,
-        imagem_principal_link: await getSignedDownloadUrl(curso.imagem_principal),
-        imagem_capa_link: await getSignedDownloadUrl(curso.imagem_capa)
-    }
+    curso.imagem_principal = `${public_bucket_url}/${curso.imagem_principal}`
+    curso.imagem_capa = `${public_bucket_url}/${curso.imagem_capa}`
 
-    
-    return cursoComImage
+    return curso
 }
 
 export async function createCourse(nome, titulo, descricao, link_inscricao, imagem_chamada_buffer, imagem_chamada_name, imagem_capa_buffer, imagem_capa_name) {
