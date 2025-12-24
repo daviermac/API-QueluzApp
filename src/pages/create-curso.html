@@ -8,43 +8,23 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 <body>
-    <form action="http://localhost:8080/news/create" method="post" enctype="multipart/form-data" onsubmit="beforeSubmit()">
-        <input type="text" name="title" id="titulo" placeholder="Título"><br><br>
-        <input type="text" name="author" id="autor" placeholder="Autor"><br><br>
-        <input type="file" name="imagem-principal" id="imagem-principal"><br><br>
+    <form action="http://localhost:8080/course/create" method="post" enctype="multipart/form-data" onsubmit="beforeSubmit()">
+        <input type="text" name="nome" id="nome" placeholder="Nome do Curso"><br><br>
+        <input type="text" name="titulo" id="titulo" placeholder="Titulo do Curso"><br><br>
         
+        <label for="imagem-principal">Imagem principal</label>
+        <input type="file" name="imagem_principal" id="imagem_principal"><br><br>
+        
+        <label for="imagem-capa">Imagem da Capa na tela Home</label>
+        <input type="file" name="imagem_capa" id="imagem_capa"><br><br>
         <!-- Editor WYSIWYG -->
         <div name="editor" id="editor" style="height: 300px;"></div>
+        <input type="hidden" name="descricao" id="descricao">
         <!-- Campo oculto que receberá o HTML do editor -->
-        
-        <label for="categoria">Categoria</label>
-        <input type="hidden" name="body" id="body">
-
-        <select name="category" id="category" required>
-            <option value="" selected disabled>Selecione uma Categoria</option>
-            <option value="SAUDE">Saúde</option>
-            <option value="EDUCACAO">Educação</option>
-            <option value="INFRAESTRUTURA">Infraestrutura</option>
-            <option value="CULTURA">Cultura</option>
-            <option value="ESPORTE">Esporte</option>
-            <option value="ADMINISTRACAO_PUBLICA">Administração Pública</option>
-            <option value="DESENVOLVIMENTO_ECONOMICO">Desenvolvimento Econômico</option>
-            <option value="SERVICOS">Serviços</option>
-            <option value="OBRAS">Obras</option>
-            <option value="TRANSPORTE">Transporte</option>
-            <option value="ASSISTENCIA_SOCIAL">Assistência Social</option>
-            <option value="SEGURANCA">Segurança</option>
-            <option value="HABITACAO">Habitação</option>
-            <option value="ECONOMIA">Economia</option>
-            <option value="EMPREGOS">Empregos</option>
-            <option value="LICITACOES">Licitações</option>
-            <option value="EVENTOS">Eventos</option>
-            <option value="TURISMO">Turismo</option>
-            <option value="MEIO_AMBIENTE">Meio Ambiente</option>
-        </select>
+        <input type="text" name="link_inscricao" id="link_inscricao" placeholder="Link de inscrição"><br><br>
 
         <br>
-        <button type="submit">Enviar notícia</button>
+        <button type="submit">Cadastrar curso</button>
     </form>
     <!-- Quill JS -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -64,7 +44,7 @@
         });
 
         function beforeSubmit() {
-            document.getElementById('body').value = quill.root.innerHTML;
+            document.getElementById('descricao').value = quill.root.innerHTML;
         }
     </script>
 

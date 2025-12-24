@@ -1,10 +1,44 @@
 import prisma from '../config/prisma.js'
-import { uploadPhotoToS3 } from '../config/S3.js'
+import { getSignedDownloadUrl, uploadPhotoToS3 } from '../config/S3.js'
 
 export async function listCourses() {
     const cursos = await prisma.curso.findMany()
 
-    return cursos
+    const coursesWithImage = await Promise.all(
+        cursos.map(async (req) => {
+            const principalSignedUrl = await getSignedDownloadUrl(req.imagem_principal)
+            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
+            
+            return {
+                ...req,
+                imagem_principal_link: principalSignedUrl,
+                imagem_capa_link: capaSignedUrl
+            }
+        })
+    )
+
+    return coursesWithImage
+}
+
+export async function listFirstThreeCourses() {
+    const cursos = await prisma.curso.findMany({
+        take: 3
+    })
+
+    const coursesWithImage = await Promise.all(
+        cursos.map(async (req) => {
+            const principalSignedUrl = await getSignedDownloadUrl(req.imagem_principal)
+            const capaSignedUrl = await getSignedDownloadUrl(req.imagem_capa)
+            
+            return {
+                ...req,
+                imagem_principal_link: principalSignedUrl,
+                imagem_capa_link: capaSignedUrl
+            }
+        })
+    )
+
+    return coursesWithImage
 }
 
 export async function listCourseById(cursoId) {
@@ -22,11 +56,18 @@ export async function listCourseById(cursoId) {
         throw new Error("Erro: Curso não existe!")
     }
 
-    return curso
+    const cursoComImage = {
+        ...curso,
+        imagem_principal_link: await getSignedDownloadUrl(curso.imagem_principal),
+        imagem_capa_link: await getSignedDownloadUrl(curso.imagem_capa)
+    }
+
+    
+    return cursoComImage
 }
 
 export async function createCourse(nome, titulo, descricao, link_inscricao, imagem_chamada_buffer, imagem_chamada_name, imagem_capa_buffer, imagem_capa_name) {
-    if (!titulo, !descricao, !link_inscricao, !imagem_chamada_buffer, !imagem_chamada_name, !imagem_capa_buffer, !imagem_capa_name) {
+    if (!nome, !titulo, !descricao, !link_inscricao, !imagem_chamada_buffer, !imagem_chamada_name, !imagem_capa_buffer, !imagem_capa_name) {
         throw new Error("Erro: Todos os dados devem ser informados!")
     }
     
@@ -39,11 +80,13 @@ export async function createCourse(nome, titulo, descricao, link_inscricao, imag
 
     const course = await prisma.curso.create({
         data: {
+            nome,
             titulo,
             descricao,
             link_inscricao,
             imagem_principal: imagem_chamada,
-            imagem_capa
+            imagem_capa,
+            criado_em: new Date()
         }
     })
     
