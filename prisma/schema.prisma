@@ -371,3 +371,32 @@ model Noticia {
 
   categoria CategoriaNoticia
 }
+
+// -----------------------------------------------------
+// REPARO NA ILUMINAÇÃO PUBLICA
+// -----------------------------------------------------
+
+enum TipoProblema {
+  POSTE_QUEIMADO
+  POSTE_PISCANDO
+  POSTE_QUEBRADO
+  OUTRO
+}
+
+enum StatusSolicitacaoReparo {
+  RECEBIDA
+  ATENDIDA
+}
+
+model SolicitacaoReparoIluminacao {
+  idSolicitacaoReparo   String                  @id @default(uuid())
+  tipoProblema          TipoProblema
+  descricao             String
+  enderecoTexto         String
+  referencia            String
+  latitude              String?
+  longitude             String?
+  imagem_url            String?
+  criadaEm              DateTime                @db.Date
+  statusSolicitacao     StatusSolicitacaoReparo @default(RECEBIDA)
+}
