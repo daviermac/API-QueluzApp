@@ -99,11 +99,11 @@ model Usuario {
   telefoneConfirmado Boolean       @default(false)
   emailConfirmado    Boolean       @default(false)
   createdAt          DateTime      @db.Date
-  AcompanhantePaciente AcompanhantePaciente[]
 
+  AcompanhantePaciente AcompanhantePaciente[]
   Funcionario Funcionario[]
   Solicitacao Solicitacao[]
-  
+  SolicitacaoReparoIluminacao SolicitacaoReparoIluminacao[]
 }
 
 // Funcionário (ex.: motorista, administrativo etc.)
@@ -399,4 +399,10 @@ model SolicitacaoReparoIluminacao {
   imagem_url            String?
   criadaEm              DateTime                @db.Date
   statusSolicitacao     StatusSolicitacaoReparo @default(RECEBIDA)
+
+  // FK
+  usuarioId             String
+  usuario               Usuario @relation(fields: [usuarioId], references: [idUsuario], onDelete: Cascade)
+
+  @@index([usuarioId])
 }
