@@ -55,6 +55,7 @@ enum TipoSolicitacao {
   VIAGEM
   OUVIDORIA
   CONSULTA
+  REPARO_POSTE
 }
 
 // Categoria das notícias do portal
@@ -157,6 +158,7 @@ model Solicitacao {
   MensagemOuvidoria MensagemOuvidoria[]
   PedidoConsulta    PedidoConsulta[]
   SolicitacaoViagem SolicitacaoViagem[]
+  SolicitacaoReparoIluminacao SolicitacaoReparoIluminacao[]
 
   @@index([Usuario_idUsuario])
 }
@@ -390,6 +392,7 @@ enum StatusSolicitacaoReparo {
 
 model SolicitacaoReparoIluminacao {
   idSolicitacaoReparo   String                  @id @default(uuid())
+  Solicitacao_idSolicitacao  String
   tipoProblema          TipoProblema
   descricao             String
   enderecoTexto         String
@@ -403,6 +406,8 @@ model SolicitacaoReparoIluminacao {
   // FK
   usuarioId             String
   usuario               Usuario @relation(fields: [usuarioId], references: [idUsuario], onDelete: Cascade)
+  Solicitacao   Solicitacao   @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
 
   @@index([usuarioId])
+  @@index([Solicitacao_idSolicitacao])
 }

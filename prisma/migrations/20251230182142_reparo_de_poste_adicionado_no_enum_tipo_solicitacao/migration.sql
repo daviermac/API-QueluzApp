@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Solicitacao` MODIFY `TipoSolicitacao` ENUM('VIAGEM', 'OUVIDORIA', 'CONSULTA', 'REPARO_POSTE') NOT NULL;

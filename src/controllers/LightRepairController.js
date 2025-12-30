@@ -27,10 +27,10 @@ router.post("/generate-url", async (req, res) => {
 })
 
 router.post("/request", async (req, res) => {
-    const { idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem } = req.body
+    const { idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem, primeiroNome, sobrenome, email, telefone } = req.body
 
     try {
-        const request = await LightRepairService.requestLightRepair(idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem)   
+        const request = await LightRepairService.requestLightRepair(idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem, primeiroNome, sobrenome, email, telefone)   
         
         return res.json({
             error: false,
@@ -47,7 +47,41 @@ router.post("/request", async (req, res) => {
 })
 
 router.get("/getAllRequests", async (req, res) => {
+    try {
+        const requests = await LightRepairService.getAllRequests()
+        
+        return res.json({
+            error: false,
+            message: 'Requisições listadas com sucesso!',
+            requests
+        })
+    } catch (error) {
+        console.error(`Erro ao receber dados: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao enviar solicitação: ${error.message}`
+        })
+    }
+})
 
+router.get("/get/:requestId", async (req, res) => {
+    const { requestId } = req.params
+
+    try {
+        const request = await LightRepairService.getRequestById(requestId)
+
+        return res.json({
+            error: false,
+            message: 'Requisição listada com sucesso!',
+            request
+        })
+    } catch (error) {
+        console.error(`Erro ao receber solicitação: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao receber solicitação: ${error.message}`
+        })
+    }
 })
 
 router.put("/closeRequest", async (req, res) => {
