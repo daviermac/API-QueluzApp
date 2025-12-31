@@ -8,6 +8,10 @@ export async function listRequestsByUser(idUsuario) {
     const requests = await prisma.solicitacao.findMany({
         where: {
             Usuario_idUsuario: idUsuario
+        },
+        include: {
+            SolicitacaoReparoIluminacao: true,
+            SolicitacaoViagem: true
         }
     })
 

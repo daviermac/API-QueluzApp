@@ -1,5 +1,15 @@
 import prisma from '../config/prisma.js'
 import bcrypt from 'bcrypt'
+ 
+export async function getUserById() {}
+
+export async function getUserByEmail(email) {
+    if (!email) {
+        throw new Error("Erro: E-mail não informado!")
+    }
+
+    
+}
 
 export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, senha, endereco) {
     if (!primeiroNome, !sobrenome, !cpf, !telefone, !email, !senha, !endereco) {

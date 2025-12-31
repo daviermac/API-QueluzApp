@@ -84,6 +84,26 @@ router.get("/get/:requestId", async (req, res) => {
     }
 })
 
+router.get("/getByUser/:idUsuario", async (req, res) => {
+    const { idUsuario } = req.params
+
+    try {
+        const requests = await LightRepairService.getRequestsByUser(idUsuario)
+
+        return res.json({
+            error: false,
+            message: 'Requisições listada com sucesso!',
+            requests
+        })
+    } catch (error) {
+        console.error(`Erro ao receber solicitação: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao receber solicitação: ${error.message}`
+        })
+    }
+})
+
 router.put("/closeRequest", async (req, res) => {
 
 })

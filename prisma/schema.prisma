@@ -152,6 +152,7 @@ model Solicitacao {
   sobrenome_solicitante     String
   email_solicitante         String
   telefone_solicitante      String
+  criadaEm                  DateTime               @db.Date
   TipoSolicitacao           TipoSolicitacao
 
   Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
@@ -269,8 +270,8 @@ model SolicitacaoViagem {
   data_consulta               DateTime @db.Date
   horario_consulta            DateTime @db.Time(0)
   motivo_cancelamento         String? 
-  
-  StatusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
+
+  statusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
   Acompanhante  Acompanhante? @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante])
   Solicitacao   Solicitacao   @relation(fields: [Solicitacao_idSolicitacao], references: [idSolicitacao], onDelete: Cascade)
   Viagem        Viagem?       @relation(fields: [Viagem_idViagem], references: [idViagem])
@@ -400,7 +401,6 @@ model SolicitacaoReparoIluminacao {
   latitude              String?
   longitude             String?
   imagem_url            String?
-  criadaEm              DateTime                @db.Date
   statusSolicitacao     StatusSolicitacaoReparo @default(RECEBIDA)
 
   // FK

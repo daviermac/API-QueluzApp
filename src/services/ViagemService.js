@@ -108,6 +108,7 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
       sobrenome_solicitante: surname,
       email_solicitante: email,
       telefone_solicitante: cellphone,
+      criadaEm: new Date()
     }
   })
 
@@ -123,7 +124,7 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
     comprovante_url: comprovante,
     data_consulta:  parseDateBR(data),
     horario_consulta: parseHoraBR(hora),
-    StatusSolicitacao: 'PENDENTE'
+    statusSolicitacao: 'PENDENTE',
   };
 
   if (acompanhante) {

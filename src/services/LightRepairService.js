@@ -1,7 +1,7 @@
 import prisma from "../config/prisma.js";
 
 export async function requestLightRepair(idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem, primeiroNome, sobrenome, email, telefone) {
-    const lightRepairRequest = await prisma.solicitacaoReparoIluminacao.create({
+    const result = await prisma.solicitacaoReparoIluminacao.create({
         data: {
             tipoProblema,
             descricao,
@@ -10,23 +10,26 @@ export async function requestLightRepair(idUsuario, tipoProblema, descricao, end
             latitude,
             longitude,
             imagem_url: imagem,
-            usuarioId: idUsuario,
-            criadaEm: new Date()
-        }   
-    })
+            usuario: {
+            connect: { idUsuario }
+            },
 
-    await prisma.solicitacao.create({
-        data: {
-            Usuario_idUsuario: idUsuario,
-            primeiro_nome_solicitante: primeiroNome,
-            sobrenome_solicitante: sobrenome,
-            email_solicitante: email,
-            telefone_solicitante: telefone,
-            TipoSolicitacao: 'REPARO_POSTE'
+            Solicitacao: {
+            create: {
+                Usuario_idUsuario: idUsuario,
+                primeiro_nome_solicitante: primeiroNome,
+                sobrenome_solicitante: sobrenome,
+                email_solicitante: email,
+                telefone_solicitante: telefone,
+                TipoSolicitacao: 'REPARO_POSTE',
+                criadaEm: new Date()
+            }
+            }
         }
-    })
+        })
 
-    return lightRepairRequest
+
+    return result
 }
 
 export async function getAllRequests() {
@@ -51,6 +54,20 @@ export async function getRequestById(requestId) {
     }
 
     return request
+}
+
+export async function getRequestsByUser(usuarioId) {
+    if (!usuarioId) {
+        throw new Error("Erro: ID de usuário não informado!")
+    }
+
+    const requests = await prisma.solicitacaoReparoIluminacao.findMany({
+        where: {
+            usuarioId
+        }
+    })
+
+    return requests
 }
 
 export async function closeRequest() {
