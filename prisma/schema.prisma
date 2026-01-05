@@ -154,6 +154,7 @@ model Solicitacao {
   telefone_solicitante      String
   criadaEm                  DateTime               @db.Date
   TipoSolicitacao           TipoSolicitacao
+  motivo_cancelamento       String?
 
   Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
   MensagemOuvidoria MensagemOuvidoria[]
@@ -260,7 +261,7 @@ model AcompanhantePaciente {
 // Solicitações de viagem (subtipo de Solicitação)
 model SolicitacaoViagem {     
   idSolicitacaoViagem         String                     @id @default(uuid())
-  Solicitacao_idSolicitacao   String
+  Solicitacao_idSolicitacao   String                     @unique
   Acompanhante_idAcompanhante String?
   Viagem_idViagem             String?
   endereco_paciente           String
@@ -269,7 +270,6 @@ model SolicitacaoViagem {
   comprovante_url             String?
   data_consulta               DateTime @db.Date
   horario_consulta            DateTime @db.Time(0)
-  motivo_cancelamento         String? 
 
   statusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
   Acompanhante  Acompanhante? @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante])
@@ -389,11 +389,12 @@ enum TipoProblema {
 enum StatusSolicitacaoReparo {
   RECEBIDA
   ATENDIDA
+  CANCELADA
 }
 
 model SolicitacaoReparoIluminacao {
   idSolicitacaoReparo   String                  @id @default(uuid())
-  Solicitacao_idSolicitacao  String
+  Solicitacao_idSolicitacao  String             @unique
   tipoProblema          TipoProblema
   descricao             String
   enderecoTexto         String

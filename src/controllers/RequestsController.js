@@ -23,4 +23,25 @@ router.get("/get/:idUsuario", async (req, res) => {
     }
 })
 
+router.put("/cancel/:requestId", async (req, res) => {
+    const { requestId } = req.params
+    const { motive } = req.body
+
+    try {
+        const requestUpdated = await RequestsService.cancelRequest(requestId, motive)
+
+        res.json({
+            error: false,
+            message: "Solicitação cancelada com sucesso!",
+            requestUpdated
+        })
+    } catch (error) {
+        console.error(`Erro ao cancelar requisição: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao cancelar requisição: ${error.message}`
+        })
+    }
+})
+
 export default router
