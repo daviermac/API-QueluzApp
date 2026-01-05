@@ -3,6 +3,28 @@ import * as FuncionarioServices from '../services/FuncionarioService.js'
 
 const router = express.Router()
 
+router.post("/login", async (req, res) => {
+    const { matricula, senha } = req.body
+
+    try {
+        const { funcionario, token, functions } = await FuncionarioServices.loginFuncionario(matricula, senha)
+        
+        return res.json({
+            error: false,
+            message: "Login realizado com sucesso!",
+            funcionario,
+            funcoes: functions,
+            token
+        })
+    } catch (error) {
+        console.error("Erro ao realizar autenticação", error.message)
+        res.status(401).json({
+            error: true,
+            message: error.message
+        })
+    }
+})
+
 router.get("/getFuncionarioByCpf/:cpf", async (req, res) => {
     const { cpf } = req.params
 
@@ -38,10 +60,18 @@ router.get("/listFunctions", async (req, res) => {
 })
 
 router.post("/register", async (req, res) => {
-    const { idUsuario, idFuncao, pis, matricula } = req.body
+    const { cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao } = req.body
 
     try {
-        const funcionario = await FuncionarioServices.createFuncionario(idUsuario, pis, matricula, idFuncao)
+        const funcionario = await FuncionarioServices.createFuncionario(
+                cpf,
+                primeiroNome,
+                sobrenome,
+                senha,
+                pis,      
+                matricula,
+                idFuncao
+            )
 
         return res.json({
             error: false,

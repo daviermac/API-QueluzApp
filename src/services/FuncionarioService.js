@@ -1,4 +1,49 @@
 import prisma from '../config/prisma.js'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+
+export async function loginFuncionario(matricula, senha) {
+    if (!matricula || !senha) {
+        throw new Error("Erro: Dados obrigatórios!")
+    }   
+     
+    const funcionario = await prisma.funcionario.findUnique({
+        where: {
+            matricula,
+        }
+    })  
+     
+    if (!funcionario) {
+        throw new Error("Erro: nenhum usuário cadastrado com essa matrícula!")
+    }   
+     
+    const correctPassword = await bcrypt.compare(senha, funcionario.senha)
+     
+    if (!correctPassword) {
+        throw new Error("Erro: credenciais incorretas!")
+    }
+
+    const functions = await prisma.funcionarioFuncao.findMany({
+        where: {
+            Funcionario_idFuncionario: funcionario.idFuncionario
+        },
+        select: {
+            Funcao: {
+                select: {
+                    nome: true
+                }
+            }
+        }
+    })
+
+    const token = jwt.sign(
+        {funcionario}, 
+        process.env.SECRET,
+        {expiresIn: '1D'}
+    )
+
+    return { funcionario, token, functions }
+}
 
 export async function listFunctions() {
     const functionList = await prisma.funcao.findMany()
@@ -9,12 +54,9 @@ export async function listFunctions() {
 export async function listFuncionarioByCPF(cpf) {
     const funcionario = await prisma.funcionario.findFirst({
         where: {
-            Usuario: {
-                cpf
-            }
+            cpf 
         },
         include: {
-            Usuario: true,
             FuncionarioFuncao: {
                 include: {
                     Funcao: true
@@ -30,15 +72,41 @@ export async function listFuncionarioByCPF(cpf) {
     return funcionario
 }
 
-export async function createFuncionario(idUsuario, pis, matricula, idFuncao) {
-    if (!idUsuario, !pis, !matricula, !idFuncao) {
+export async function createFuncionario(cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao) {
+    if (!cpf || !primeiroNome || !sobrenome || !pis || !senha || !matricula || !idFuncao) {
         throw new Error("Erro: dados obrigatórios!")
+    }
+
+    const functionExists = await prisma.funcao.findUnique({
+        where: {
+            idFuncao
+        }
+    })
+
+    if (!functionExists) {
+        throw new Error("Erro: função não encontrada ou não cadastrada!")
+    }
+
+    const relationExists = await prisma.funcionarioFuncao.findFirst({
+        where: {
+            Funcao_idFuncao: idFuncao,
+            Funcionario: {
+                pis
+            }
+        }
+    })
+
+    if (relationExists) {
+        throw new Error("Erro: funcionário já encaixado nessa função!")
     }
 
     return await prisma.$transaction(async (tx) => {
         const funcionario = await tx.funcionario.create({
             data: {
-                Usuario_idUsuario: idUsuario,
+                cpf,
+                primeiroNome,
+                sobrenome,
+                senha: await bcrypt.hash(senha, 10),
                 pis,
                 matricula,
             }
@@ -52,8 +120,9 @@ export async function createFuncionario(idUsuario, pis, matricula, idFuncao) {
         })
 
         return funcionario
-    })
-}   
+    }
+)}
+
 
 export async function createFunction(nome) {
     if (!nome) {
@@ -67,4 +136,4 @@ export async function createFunction(nome) {
     })
 
     return funcao
-}   
+}

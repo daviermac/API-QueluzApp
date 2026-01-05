@@ -102,7 +102,6 @@ model Usuario {
   createdAt          DateTime      @db.Date
 
   AcompanhantePaciente AcompanhantePaciente[]
-  Funcionario Funcionario[]
   Solicitacao Solicitacao[]
   SolicitacaoReparoIluminacao SolicitacaoReparoIluminacao[]
 }
@@ -110,15 +109,16 @@ model Usuario {
 // Funcionário (ex.: motorista, administrativo etc.)
 model Funcionario {
   idFuncionario     String                 @id @default(uuid())
-  Usuario_idUsuario String
-  pis               Int?
-  matricula         Int?
+  cpf               String                 @unique
+  primeiroNome      String
+  sobrenome         String
+  senha             String
+  pis               Int?                   @unique
+  matricula         Int?                   @unique  
+  createdAt         DateTime               @default(now())
 
-  Usuario           Usuario             @relation(fields: [Usuario_idUsuario], references: [idUsuario], onDelete: Cascade)
   FuncionarioFuncao FuncionarioFuncao[]
   Viagem            Viagem[]
-
-  @@index([Usuario_idUsuario])
 } 
 
 // Funções atribuídas aos funcionários

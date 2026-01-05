@@ -4,8 +4,9 @@ import * as AuthService from '../services/AuthService.js'
 const router = express.Router()
 
 router.post("/login", async (req, res) => {
+    const { cpf, senha } = req.body
+
     try {
-        const { cpf, senha } = req.body
         const { user, token } = await AuthService.login(cpf, senha)
 
         return res.json({
