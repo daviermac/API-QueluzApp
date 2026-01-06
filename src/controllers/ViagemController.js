@@ -4,25 +4,6 @@ import { getSignedUploadUrl } from '../config/S3.js'
 
 const router = express.Router()
 
-// router.get("/companion/:idAcompanhante", async (req, res) => {
-//     const { idAcompanhante } = req.params
-
-//     try {
-//         const companion = await ViagemService.getCompanionById(Number(idAcompanhante))
-//         res.json({ 
-//             error: false,
-//             message: "Acompanhante encontrado com sucesso!", 
-//             companion, 
-//         });
-//     } catch (error) {
-//         console.error(`Erro ao buscar acompanhante: ${error.message}`)
-//         res.status(400).json({
-//             error: true,
-//             message: `Erro ao buscar acompanhante: ${error.message}`
-//         })
-//     }
-// })
-
 router.get("/getRequests", async (req, res) => {
     try {
         const requests = await ViagemService.listViagemRequests()

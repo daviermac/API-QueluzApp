@@ -49,7 +49,7 @@ router.post("/create", upload.single("imagem-principal"), async (req, res) => {
     }
 })
 
-router.get("/get", async (req, res) => {
+router.get("/get", authMiddleware, async (req, res) => {
     const auth = req.headers.authorization
 
     if (auth) {
@@ -71,7 +71,7 @@ router.get("/get", async (req, res) => {
     }
 })
 
-router.get("/getFirstFive", async (req, res) => {
+router.get("/getFirstFive", authMiddleware, async (req, res) => {
     try {
         const news = await NewsService.listFirstFiveNews()
         return res.json({
@@ -87,7 +87,7 @@ router.get("/getFirstFive", async (req, res) => {
     }
 })
 
-router.get("/get/:idNoticia", async (req, res) => {
+router.get("/get/:idNoticia", authMiddleware, async (req, res) => {
     const { idNoticia } = req.params
 
     try {
@@ -106,7 +106,7 @@ router.get("/get/:idNoticia", async (req, res) => {
     }
 })
 
-router.patch("/edit/:idNoticia", upload.single("imagem-principal"), async (req, res) => {
+router.patch("/edit/:idNoticia", upload.single("imagem-principal"), authMiddleware, async (req, res) => {
     const { idNoticia } = req.params
     const { title, body, category, author } = req.body
     const fileBuffer = req.file.buffer
@@ -128,7 +128,7 @@ router.patch("/edit/:idNoticia", upload.single("imagem-principal"), async (req, 
     }
 })
 
-router.delete("/delete/:idNoticia", async (req, res) => {
+router.delete("/delete/:idNoticia", authMiddleware, async (req, res) => {
     const { idNoticia } = req.params
     
     try {

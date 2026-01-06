@@ -49,6 +49,8 @@ export async function getRequestById(requestId) {
         }
     })
 
+    console.log(requestId)
+
     if (!request) {
         throw new Error("Erro: Nenhuma solicitação encontrada com este ID!")
     }
