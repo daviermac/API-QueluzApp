@@ -31,12 +31,34 @@ router.get("/getFuncionarioByCpf/:cpf", async (req, res) => {
     try {
         const funcionario = await FuncionarioServices.listFuncionarioByCPF(cpf)
         
-        res.json(funcionario)
+        return res.json({
+            error: false,
+            message: "Funcionario listado com sucesso!",
+            funcionario,
+        })
     } catch (error) {
         console.error(`Erro ao listar funcionário por CPF: ${error.message}`)
         res.status(400).json({
             error: true,
             message: `Erro ao listar funcionário por CPF: ${error.message}`
+        })
+    }
+})
+
+router.get("/getMotoristas", async (req, res) => {
+    try {
+        const motoristas = await FuncionarioServices.getMotoristas()
+
+        return res.json({
+            error: false,
+            message: "Motoristas listados com sucesso!",
+            motoristas
+        })
+    } catch (error) {
+        console.error(`Erro ao listar motoristas: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao listar motoristas: ${error.message}`
         })
     }
 })

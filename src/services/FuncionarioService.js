@@ -72,6 +72,33 @@ export async function listFuncionarioByCPF(cpf) {
     return funcionario
 }
 
+export async function getMotoristas() {
+    const motoristas = await prisma.funcionarioFuncao.findMany({
+        where: {
+            Funcao: {
+                nome: 'MOTORISTA'
+            }
+        },
+        select: {
+            Funcionario: {
+                select: {
+                    idFuncionario: true,
+                    matricula: true,
+                    primeiroNome: true,
+                    sobrenome: true
+                }
+            },
+            Funcao: {
+                select: {
+                    nome: true
+                }
+            }
+        }
+    })
+
+    return motoristas
+}
+
 export async function createFuncionario(cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao) {
     if (!cpf || !primeiroNome || !sobrenome || !pis || !senha || !matricula || !idFuncao) {
         throw new Error("Erro: dados obrigatórios!")
