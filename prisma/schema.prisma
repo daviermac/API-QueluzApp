@@ -96,7 +96,14 @@ model Usuario {
   telefone           String        @db.Char(11)
   email              String        @unique
   senha              String
-  endereco           String
+  // endereco           String // vai sair
+  // Novos campos de endereço
+  cep                String        @db.Char(8)
+  rua                String
+  numero             String
+  bairro             String
+  cidade             String
+  
   telefoneConfirmado Boolean       @default(false)
   emailConfirmado    Boolean       @default(false)
   createdAt          DateTime      @db.Date

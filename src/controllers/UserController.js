@@ -5,8 +5,8 @@ const router = express.Router()
 
 router.post("/create", async (req, res) => {
     try {
-        const { primeiroNome, sobrenome, cpf, telefone, email, senha, endereco } = req.body
-        const user = await UserService.createUser(primeiroNome, sobrenome, cpf, telefone, email, senha, endereco)
+        const { primeiroNome, sobrenome, cpf, telefone, email, senha, cep, rua, numero, bairro, cidade } = req.body
+        const user = await UserService.createUser(primeiroNome, sobrenome, cpf, telefone, email, senha, cep, rua, numero, bairro, cidade)
         
         return res.json({
             error: false,
@@ -25,8 +25,8 @@ router.post("/create", async (req, res) => {
 router.put("/update/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
     try {
-        const { primeiroNome, sobrenome, cpf, telefone, email, endereco } = req.body
-        const updatedUser = await UserService.updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefone, email, endereco)
+        const { primeiroNome, sobrenome, cpf, telefone, email, cep, rua, numero, bairro, cidade} = req.body
+        const updatedUser = await UserService.updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefone, email, cep, rua, numero, bairro, cidade)
         
         return res.json({
             error: false,

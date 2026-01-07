@@ -11,8 +11,8 @@ export async function getUserByEmail(email) {
     
 }
 
-export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, senha, endereco) {
-    if (!primeiroNome, !sobrenome, !cpf, !telefone, !email, !senha, !endereco) {
+export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, senha, cep, rua, numero, bairro, cidade) {
+    if (!primeiroNome, !sobrenome, !cpf, !telefone, !email, !senha, !cep, !rua, !numero, !bairro, !cidade) {
         throw new Error("Erro: Todos os campos são obrigatórios!")
     }
 
@@ -39,7 +39,11 @@ export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, 
             cpf,
             telefone,
             email,
-            endereco,
+            cep,
+            rua,
+            numero,
+            bairro,
+            cidade,
             createdAt: new Date()
         }
     })
@@ -47,7 +51,7 @@ export async function createUser(primeiroNome, sobrenome, cpf, telefone, email, 
     return usuario
 }
 
-export async function updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefone, email, endereco) {
+export async function updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefone, email, cep, rua, numero, bairro, cidade) {
     if (!idUsuario) {
         throw new Error("Erro: ID de usuário não informado!")
     }
@@ -64,7 +68,7 @@ export async function updateUser(idUsuario, primeiroNome, sobrenome, cpf, telefo
 
     const userUpdated = await prisma.usuario.update({
         data: {
-            primeiroNome, sobrenome, cpf, telefone, email, endereco
+            primeiroNome, sobrenome, cpf, telefone, email, cep, rua, numero, bairro, cidade
         },
         where: {
             idUsuario
