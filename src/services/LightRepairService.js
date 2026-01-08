@@ -59,6 +59,8 @@ export async function getRequestById(requestId) {
         throw new Error("Erro: Nenhuma solicitação encontrada com este ID!")
     }
 
+    request.imagem_url = `${public_bucket_url}/${request.imagem_url}`
+
     return request
 }
 
