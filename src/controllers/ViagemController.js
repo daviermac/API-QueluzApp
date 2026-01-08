@@ -1,5 +1,6 @@
 import express from 'express'
 import * as ViagemService from '../services/ViagemService.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 import { getSignedUploadUrl } from '../config/S3.js'
 
 const router = express.Router()
@@ -72,7 +73,7 @@ router.post("/request", async (req, res) => {
             comprovante, data, hora, companion_name, companion_phone, companion_email, companion_cpf,
             companion_address 
         } = req.body
-
+            
         const viagem = await ViagemService.requestViagem(
             idUsuario, 
             first_name, 

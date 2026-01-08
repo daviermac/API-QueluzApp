@@ -1,5 +1,7 @@
 import prisma from "../config/prisma.js";
 
+const public_bucket_url = process.env.PUBLIC_BUCKET_URL
+
 export async function requestLightRepair(idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem, primeiroNome, sobrenome, email, telefone) {
     const result = await prisma.solicitacaoReparoIluminacao.create({
         data: {
@@ -39,6 +41,10 @@ export async function getAllRequests() {
         }
     })
 
+    requestsLists.map(request => {
+        request.imagem_url = `${public_bucket_url}/${request.imagem_url}`
+    })
+
     return requestsLists
 }
 
@@ -48,8 +54,6 @@ export async function getRequestById(requestId) {
             idSolicitacaoReparo: requestId
         }
     })
-
-    console.log(requestId)
 
     if (!request) {
         throw new Error("Erro: Nenhuma solicitação encontrada com este ID!")

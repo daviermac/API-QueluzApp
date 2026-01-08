@@ -1,11 +1,10 @@
 import express from 'express'
-import authMiddleware from '../middlewares/authMiddleware.js'
 import * as EventServices from '../services/EventService.js'
 import upload from '../config/multer.js'
 
 const router = express.Router()
 
-router.get("/get", authMiddleware, async (req, res) => {
+router.get("/get", async (req, res) => {
     try {
         const events = await EventServices.listAllEvents()
 
@@ -23,7 +22,7 @@ router.get("/get", authMiddleware, async (req, res) => {
     }
 })
 
-router.get("/getFirstTwo", authMiddleware, async (req, res) => {
+router.get("/getFirstTwo", async (req, res) => {
     try {
         const events = await EventServices.listFirstTwoEvents()
 
@@ -41,7 +40,7 @@ router.get("/getFirstTwo", authMiddleware, async (req, res) => {
     }
 })
 
-router.get("/get/:eventId", authMiddleware, async (req, res) => {
+router.get("/get/:eventId", async (req, res) => {
     const { eventId } = req.params
 
     try {
@@ -61,7 +60,7 @@ router.get("/get/:eventId", authMiddleware, async (req, res) => {
     }
 })
 
-router.post("/create", upload.fields([{ name: "imagem_chamada", maxCount: 1 }, authMiddleware, { name: "imagem_capa", maxCount: 1 }]), async (req, res) => {
+router.post("/create", upload.fields([{ name: "imagem_chamada", maxCount: 1 }, { name: "imagem_capa", maxCount: 1 }]), async (req, res) => {
     const { titulo, descricao, local_evento, mesInicio, anoInicio, intervaloDatas } = req.body
     
     const capaBuffer = req.files.imagem_capa?.[0].buffer
@@ -87,7 +86,7 @@ router.post("/create", upload.fields([{ name: "imagem_chamada", maxCount: 1 }, a
     }
 })
 
-router.delete("/delete/:eventId", authMiddleware, async (req, res) => {
+router.delete("/delete/:eventId", async (req, res) => {
     try {
         
     } catch (error) {
@@ -99,7 +98,7 @@ router.delete("/delete/:eventId", authMiddleware, async (req, res) => {
     }
 })
 
-router.put("/inactivate/:eventId", authMiddleware, async (req, res) => {
+router.put("/inactivate/:eventId", async (req, res) => {
     try {
         
     } catch (error) {
