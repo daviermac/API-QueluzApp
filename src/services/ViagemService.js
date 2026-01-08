@@ -3,6 +3,7 @@ import parseDateBR from "../helpers/parseDateBR.js";
 import parseHoraBR from "../helpers/parseHoraBR.js";
 
 import { getSignedDownloadUrl } from "../config/S3.js";
+const bucket_privado = process.env.AWS_PRIVATE_BUCKET
 
 export async function getCompanionData(userId, companionId) {
   const companionUserRelation = await prisma.acompanhantePaciente.findFirst({
@@ -28,7 +29,7 @@ export async function listViagemRequests() {
   const requestsWithSignedUrls = await Promise.all(
     requests.map(async (req) => {
       if (req.comprovante_url) {
-        const signedUrl = await getSignedDownloadUrl(req.comprovante_url);
+        const signedUrl = await getSignedDownloadUrl(bucket_privado, req.comprovante_url);
         return {
           ...req,
           link_comprovante_acessivel: signedUrl
@@ -64,7 +65,7 @@ export async function listViagemRequestsByUser(userId) {
           "$1"
         );
 
-        const signedUrl = await getSignedDownloadUrl(fileKey, "image/jpeg");
+        const signedUrl = await getSignedDownloadUrl(bucket_privado, fileKey, "image/jpeg");
         return {
           ...req,
           link_comprovante_acessivel: signedUrl

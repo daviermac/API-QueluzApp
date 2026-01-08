@@ -3,6 +3,8 @@ import { getSignedUploadUrl } from '../config/S3.js'
 import express from 'express'
 const router = express.Router()
 
+const bucket_publico = process.env.AWS_PUBLIC_BUCKET
+
 router.post("/generate-url", async (req, res) => {
     const { fileType, idUsuario } = req.body
 
@@ -10,7 +12,7 @@ router.post("/generate-url", async (req, res) => {
         const fileName = `${Date.now()}-${idUsuario}.jpg`
         const fileKey = `imagem-poste/${idUsuario}/${fileName}`
 
-        const uploadUrl = await getSignedUploadUrl(fileKey, fileType)
+        const uploadUrl = await getSignedUploadUrl(bucket_publico, fileKey)
                 
         res.status(201).json({ 
             error: false, 

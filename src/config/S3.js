@@ -7,16 +7,15 @@ const s3Client = new S3Client({
     region: process.env.AWS_REGION
 })
 
-const bucket_privado = process.env.AWS_PRIVATE_BUCKET
 const bucket_publico = process.env.AWS_PUBLIC_BUCKET
 
-export async function getSignedDownloadUrl(fileKey) {
-    const command = new GetObjectCommand({ Bucket: bucket_privado, Key: fileKey })
+export async function getSignedDownloadUrl(bucket, fileKey) {
+    const command = new GetObjectCommand({ Bucket: bucket, Key: fileKey })
     return await getSignedUrl(s3Client, command, { expiresIn: 3600 })
 }   
 
-export async function getSignedUploadUrl(fileKey) {
-    const command = new PutObjectCommand({ Bucket: bucket_privado, Key: fileKey });
+export async function getSignedUploadUrl(bucket, fileKey) {
+    const command = new PutObjectCommand({ Bucket: bucket, Key: fileKey });
     return await getSignedUrl(s3Client, command, { expiresIn: 60 })
 }   
 

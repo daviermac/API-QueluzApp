@@ -3,6 +3,8 @@ import * as ViagemService from '../services/ViagemService.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import { getSignedUploadUrl } from '../config/S3.js'
 
+const bucket_privado = process.env.AWS_PRIVATE_BUCKET
+
 const router = express.Router()
 
 router.get("/getRequests", async (req, res) => {
@@ -50,7 +52,7 @@ router.post("/generate-url", async (req, res) => {
         const fileName = `${Date.now()}-${idUsuario}.jpg`
         const fileKey = `comprovantes/${idUsuario}/${fileName}`
 
-        const uploadUrl = await getSignedUploadUrl(fileKey, fileType)
+        const uploadUrl = await getSignedUploadUrl(bucket_privado, fileKey)
                 
         res.status(201).json({ 
             error: false, 
