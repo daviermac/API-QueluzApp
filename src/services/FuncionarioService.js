@@ -37,12 +37,12 @@ export async function loginFuncionario(matricula, senha) {
     })
 
     const token = jwt.sign(
-        {funcionario}, 
+        {funcionario, functions}, 
         process.env.SECRET,
         {expiresIn: '1D'}
     )
 
-    return { funcionario, token, functions }
+    return { funcionario, token }
 }
 
 export async function listFunctions() {

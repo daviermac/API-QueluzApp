@@ -20,7 +20,6 @@ datasource db {
 // Status atual do carro disponível para viagens
 enum StatusCarro {
   DISPONIVEL
-  EM_USO        
   EM_MANUTENCAO
 } 
 
@@ -275,8 +274,9 @@ model SolicitacaoViagem {
   local_consulta              String
   cidade_consulta             String
   comprovante_url             String?
-  data_consulta               DateTime @db.Date
-  horario_consulta            DateTime @db.Time(0)
+  data_consulta               DateTime                   @db.Date
+  horario_consulta            DateTime                   @db.Time(0)
+  buscado_em_casa             Boolean?
 
   statusSolicitacao StatusSolicitacaoViagem @default(PENDENTE)
   Acompanhante  Acompanhante? @relation(fields: [Acompanhante_idAcompanhante], references: [idAcompanhante])
@@ -298,11 +298,24 @@ model Viagem {
   enderecoLocalPartida      String
   
   SolicitacaoViagem SolicitacaoViagem[]
+  Parada            Parada[]
   Carro             Carro      @relation(fields: [Carro_idCarro], references: [idCarro])
   Funcionario       Funcionario @relation(fields: [Funcionario_idFuncionario], references: [idFuncionario], onDelete: Cascade)
 
   @@index([Carro_idCarro])
   @@index([Funcionario_idFuncionario])
+}
+
+model Parada {
+  idParada                String        @id @default(uuid())
+  Viagem_idViagem         String        
+  local                   String
+  endereco                String
+  horario                 DateTime      @db.Time(0)
+
+  Viagem                  Viagem        @relation(fields: [Viagem_idViagem], references: [idViagem])
+
+  @@index([Viagem_idViagem])
 }
 
 // // Pontos de parada de uma viagem (REMOVER)

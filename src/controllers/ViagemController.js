@@ -110,10 +110,10 @@ router.post("/request", async (req, res) => {
 })
 
 router.post("/create", async (req, res) => {
-    const { idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida } = req.body
+    const { idCarro, idFuncionario, idsSolicitacoes, paradas, dataPartida, enderecoLocalPartida } = req.body
 
     try {
-        const viagem = await ViagemService.createViagem(idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida)
+        const viagem = await ViagemService.createViagem(idCarro, idFuncionario, idsSolicitacoes, paradas, dataPartida, enderecoLocalPartida)
 
         return res.json({
             error: false,

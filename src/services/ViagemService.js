@@ -141,14 +141,18 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
   return viagem;
 }
 
-export async function createViagem(idCarro, idFuncionario, idsSolicitacoes, dataPartida, enderecoLocalPartida) {
+export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas, dataPartida, horaPartida, enderecoLocalPartida) {
   // Validações
   if (!idCarro || !idFuncionario || !dataPartida || !enderecoLocalPartida) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
   }
            
-  if (!Array.isArray(idsSolicitacoes) || idsSolicitacoes.length === 0) {
+  if (!Array.isArray(solicitacoes) || solicitacoes.length === 0) {
     throw new Error("Erro: É necessário informar ao menos uma solicitação!");
+  }
+
+  if (!Array.isArray(paradas) || paradas.length === 0) {
+    throw new Error("Erro: É necessário informar ao menos uma parada!");
   }
 
   return await prisma.$transaction(async (tx) => {
@@ -167,28 +171,34 @@ export async function createViagem(idCarro, idFuncionario, idsSolicitacoes, data
         Carro_idCarro: idCarro,
         Funcionario_idFuncionario: idFuncionario,
         dataPartida: parseDateBR(dataPartida),
-        enderecoLocalPartida
+        enderecoLocalPartida,
+        horaPartida
       }
     });
 
-    // Atualiza carro
-    await tx.carro.update({
-      where: { idCarro },
-      data: { StatusCarro: 'EM_USO' }
-    });
-
     // Atualiza solicitações (esperando todas)
-    await Promise.all(
-      idsSolicitacoes.map((idSolicitacao) =>
-        tx.solicitacaoViagem.update({
-          where: { idSolicitacaoViagem: idSolicitacao },
+    for (const solicitacao of solicitacoes) {
+      await tx.solicitacaoViagem.update({
+          where: { idSolicitacaoViagem: solicitacao.idSolicitacao },
           data: {
             Viagem_idViagem: viagem.idViagem,
-            StatusSolicitacao: 'CONFIRMADA'
+            StatusSolicitacao: 'CONFIRMADA',
+            buscado_em_casa: solicitacao.buscado_em_casa ? true : false
           }
-        })
-      )
-    );
+      })
+    }
+    
+    // Atribui as paradas as viagens
+    for (const parada of paradas) {
+      await tx.parada.create({
+        data: {
+          local: parada.local,
+          endereco: parada.endereco,
+          horario: parada.horario,
+          Viagem_idViagem: viagem.idViagem,
+        }
+      })
+    }
 
     return viagem;
   });
