@@ -3,7 +3,6 @@ name: Deploy API Queluz (PM2)
 on:
   push:
     branches:
-      - main
       - master
 
 jobs:
@@ -21,11 +20,22 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy on EC2
+      - name: Deploy on EC2 (Node + PM2)
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            # Carrega o NVM (necessário para npm e pm2)
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            # Vai para a pasta do projeto
             cd ${{ secrets.EC2_PATH }}
-            git pull origin main || git pull origin master
+
+            # Atualiza o código
+            git pull origin master
+
+            # Instala dependências
             npm install
+
+            # Recarrega a aplicação
             pm2 reload api-queluz-app
           EOF
