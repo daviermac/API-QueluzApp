@@ -262,7 +262,7 @@ model AcompanhantePaciente {
 
   @@id([Acompanhante_idAcompanhante, Usuario_idUsuario])
   @@index([Usuario_idUsuario])
-}
+} 
 
 // Solicitações de viagem (subtipo de Solicitação)
 model SolicitacaoViagem {     
@@ -286,16 +286,17 @@ model SolicitacaoViagem {
   @@index([Acompanhante_idAcompanhante])
   @@index([Solicitacao_idSolicitacao])
   @@index([Viagem_idViagem])
-}
+} 
 
 // Viagem (quando uma solicitação vira um transporte real)
 model Viagem {
   idViagem                  String                 @id @default(uuid())
-  Funcionario_idFuncionario String
-  Carro_idCarro             String
+  Funcionario_idFuncionario String                 
+  Carro_idCarro             String                 
   dataPartida               DateTime               @db.Date
   horaPartida               DateTime               @db.Time(0)
-  enderecoLocalPartida      String
+  localPartida              String                    
+  enderecoLocalPartida      String                 
   
   SolicitacaoViagem SolicitacaoViagem[]
   Parada            Parada[]
@@ -304,7 +305,7 @@ model Viagem {
 
   @@index([Carro_idCarro])
   @@index([Funcionario_idFuncionario])
-}
+} 
 
 model Parada {
   idParada                String        @id @default(uuid())
@@ -317,20 +318,6 @@ model Parada {
 
   @@index([Viagem_idViagem])
 }
-
-// // Pontos de parada de uma viagem (REMOVER)
-// model Parada {
-//   idParada                              String @id @default(uuid())
-//   SolicitacaoViagem_idSolicitacaoViagem Int
-//   Viagem_idViagem                       Int
-//   endereco String
-  
-//   SolicitacaoViagem SolicitacaoViagem @relation(fields: [SolicitacaoViagem_idSolicitacaoViagem], references: [idSolicitacaoViagem], onDelete: Cascade)
-//   Viagem            Viagem            @relation(fields: [Viagem_idViagem], references: [idViagem])
-
-//   @@index([SolicitacaoViagem_idSolicitacaoViagem])
-//   @@index([Viagem_idViagem])
-// }
 
 // Informações sobre os carros
 model Carro {
