@@ -141,7 +141,7 @@ export async function requestViagem( idUsuario, first_name, surname, email, cell
   return viagem;
 }
 
-export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas, dataPartida, horaPartida, enderecoLocalPartida) {
+export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas, dataPartida, horaPartida, localPartida, enderecoLocalPartida) {
   // Validações
   if (!idCarro || !idFuncionario || !dataPartida || !enderecoLocalPartida) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
@@ -171,6 +171,7 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
         Carro_idCarro: idCarro,
         Funcionario_idFuncionario: idFuncionario,
         dataPartida: parseDateBR(dataPartida),
+        localPartida,
         enderecoLocalPartida,
         horaPartida
       }
