@@ -32,7 +32,7 @@ import EventController from './src/controllers/EventController.js'
 import CourseController from './src/controllers/CourseController.js'
 import LightRepairController from './src/controllers/LightRepairController.js'
 
-app.get("/", (req, res) => res.json({ mensagem: "API QueluzApp 3.0" }))
+app.get("/", (req, res) => res.json({ mensagem: "API QueluzApp 2.5" }))
 app.use("/auth", AuthController)
 app.use("/user", UserController)
 app.use("/viagem", ViagemController)
