@@ -62,4 +62,27 @@ router.delete("/delete/:idUsuario", async (req, res) => {
     }
 })
 
+router.post("/push-token", async (req, res) => {
+    try {
+        const { token, plataforma, usuarioId } = req.body;
+
+        const result = await registerPushToken({
+            token,
+            plataforma,
+            usuarioId
+        });
+
+        return res.status(200).json({
+            error: false,
+            message: "Token recebido a manipulado com sucesso!",
+            result
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(400).json({
+        error: error.message || "Erro ao registrar push token"
+    });
+}})
+
 export default router
