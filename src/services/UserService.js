@@ -101,3 +101,30 @@ export async function deleteUser(idUsuario) {
 
     return userDeleted
 }
+
+export async function pushToken(token, plataforma, usuarioId) {
+    const tokenJaExiste = await prisma.pushToken.findUnique({
+        where: { token }
+    })
+
+    if (tokenJaExiste) {
+        if (tokenJaExiste.usuarioId === usuarioId) {
+            // Já está tudo certo
+            return tokenJaExiste
+        }
+
+        // Token era de outro usuário → atualiza
+        return await prisma.pushToken.update({
+            where: { token },
+            data: { usuarioId }
+        })
+    }
+
+    return await prisma.pushToken.create({
+        data: {
+            token,
+            usuarioId,
+            plataforma
+        }
+    })
+}

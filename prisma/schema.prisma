@@ -81,6 +81,11 @@ enum CategoriaNoticia {
   MEIO_AMBIENTE            
 }
 
+enum Plataforma {
+  IOS
+  ANDROID
+}
+
 
 // -----------------------------------------------------
 // USUÁRIO, FUNCIONÁRIO E FUNÇÕES
@@ -102,7 +107,7 @@ model Usuario {
   numero             String
   bairro             String
   cidade             String
-  
+
   telefoneConfirmado Boolean       @default(false)
   emailConfirmado    Boolean       @default(false)
   createdAt          DateTime      @db.Date
@@ -110,6 +115,19 @@ model Usuario {
   AcompanhantePaciente AcompanhantePaciente[]
   Solicitacao Solicitacao[]
   SolicitacaoReparoIluminacao SolicitacaoReparoIluminacao[]
+  PushToken         PushToken[]
+}
+
+model PushToken {
+  idToken           String                @id @default(uuid())
+  usuarioId         String
+  token             String                @unique
+  criadoEm          DateTime              @default(now())      
+
+  plataforma        Plataforma
+  Usuario           Usuario @relation(fields: [usuarioId], references: [idUsuario], onDelete: Cascade) 
+    
+  @@index([usuarioId])
 }
 
 // Funcionário (ex.: motorista, administrativo etc.)
