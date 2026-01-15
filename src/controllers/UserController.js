@@ -66,11 +66,11 @@ router.post("/push-token", async (req, res) => {
     try {
         const { token, plataforma, usuarioId } = req.body;
 
-        const result = await registerPushToken({
+        const result = await UserService.pushToken(
             token,
             plataforma,
             usuarioId
-        });
+        );
 
         return res.status(200).json({
             error: false,
