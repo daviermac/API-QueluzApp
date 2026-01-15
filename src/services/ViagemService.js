@@ -1,8 +1,9 @@
 import prisma from "../config/prisma.js";
 import parseDateBR from "../helpers/parseDateBR.js";
 import parseHoraBR from "../helpers/parseHoraBR.js";
-
 import { getSignedDownloadUrl } from "../config/S3.js";
+import { sendPushNotification } from "./NotificationService.js";
+
 const bucket_privado = process.env.AWS_PRIVATE_BUCKET
 
 export async function getCompanionData(userId, companionId) {
@@ -179,16 +180,47 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
 
     // Atualiza solicitações (esperando todas)
     for (const solicitacao of solicitacoes) {
-      await tx.solicitacaoViagem.update({
-          where: { idSolicitacaoViagem: solicitacao.idSolicitacao },
-          data: {
-            Viagem_idViagem: viagem.idViagem,
-            StatusSolicitacao: 'CONFIRMADA',
-            buscado_em_casa: solicitacao.buscado_em_casa ? true : false
+      const solicitacaoAtualizada = await tx.solicitacaoViagem.update({
+        where: { idSolicitacaoViagem: solicitacao.idSolicitacao },
+        data: {
+          Viagem_idViagem: viagem.idViagem,
+          statusSolicitacao: 'CONFIRMADA',
+          buscado_em_casa: solicitacao.buscado_em_casa ? true : false
+        },
+        include: {
+          Solicitacao: {
+            include: {
+              Usuario: {
+                include: {
+                  PushToken: true
+                }
+              }
+            }
           }
-      })
-    }
-    
+        }
+      }
+    );
+
+    const tokens = solicitacaoAtualizada.Solicitacao.Usuario.PushToken;
+    console.log(tokens)
+
+    for (const push of tokens) {
+      try {
+        await sendPushNotification({
+          token: push.token,
+          title: "Viagem confirmada 🚗",
+          body: "Sua solicitação foi confirmada com sucesso.",
+          data: {
+            viagemId: String(viagem.idViagem),
+            solicitacaoId: solicitacaoAtualizada.idSolicitacaoViagem,
+            status: "CONFIRMADA"
+          }
+        });
+      } catch (err) {
+        console.error("Erro ao enviar push:", err);
+      }
+    }}
+
     // Atribui as paradas as viagens
     for (const parada of paradas) {
       await tx.parada.create({
