@@ -1,8 +1,23 @@
 import admin from "firebase-admin";
-import serviceAccount from '../../queluz-app-firebase-adminsdk-fbsvc-b4bb26155b.json'
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const app = admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-})
+// Corrige __dirname em ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-export default app
+const serviceAccountPath = path.join(
+  __dirname,
+  "../../queluz-app-firebase-adminsdk-fbsvc-b4bb26155b.json"
+);
+
+const serviceAccount = JSON.parse(
+  fs.readFileSync(serviceAccountPath, "utf-8")
+);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+export default admin;
