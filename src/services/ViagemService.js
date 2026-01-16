@@ -173,8 +173,8 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
         Carro_idCarro: idCarro,
         dataPartida: parseDateBR(dataPartida),
         localPartida,
-        enderecoLocalPartida,
-        horaPartida
+        horaPartida: new Date(`1970-01-01T${horaPartida}`),
+        enderecoLocalPartida
       }
     });
 
