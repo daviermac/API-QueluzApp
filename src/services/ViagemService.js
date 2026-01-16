@@ -162,7 +162,7 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
       where: { idCarro }
     });
 
-    if (!car || car.StatusCarro !== 'DISPONIVEL') {
+    if (!car) {
       throw new Error("Erro: Carro não cadastrado ou indisponível!");
     }
 
@@ -178,10 +178,11 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
       }
     });
 
-    // Atualiza solicitações (esperando todas)
+    let tokens = [];
+
     for (const solicitacao of solicitacoes) {
       const solicitacaoAtualizada = await tx.solicitacaoViagem.update({
-        where: { idSolicitacaoViagem: solicitacao.idSolicitacao },
+        where: { idSolicitacaoViagem: solicitacao.idSolicitacaoViagem },
         data: {
           Viagem_idViagem: viagem.idViagem,
           statusSolicitacao: 'CONFIRMADA',
@@ -198,11 +199,12 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
             }
           }
         }
-      }
-    );
+      });
 
-    const tokens = solicitacaoAtualizada.Solicitacao.Usuario.PushToken;
-    console.log(tokens)
+      tokens.push(...solicitacaoAtualizada.Solicitacao.Usuario.PushToken);
+    }
+
+    console.log(tokens);
 
     for (const push of tokens) {
       try {
@@ -212,14 +214,13 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
           body: "Sua solicitação foi confirmada com sucesso.",
           data: {
             viagemId: String(viagem.idViagem),
-            solicitacaoId: solicitacaoAtualizada.idSolicitacaoViagem,
             status: "CONFIRMADA"
           }
         });
       } catch (err) {
         console.error("Erro ao enviar push:", err);
       }
-    }}
+    }
 
     // Atribui as paradas as viagens
     for (const parada of paradas) {
