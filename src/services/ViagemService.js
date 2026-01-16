@@ -169,8 +169,8 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
     // Cria viagem
     const viagem = await tx.viagem.create({
       data: {
-        Carro_idCarro: idCarro,
         Funcionario_idFuncionario: idFuncionario,
+        Carro_idCarro: idCarro,
         dataPartida: parseDateBR(dataPartida),
         localPartida,
         enderecoLocalPartida,
