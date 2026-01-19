@@ -22,6 +22,16 @@ router.post("/create", async (req, res) => {
     }
 })
 
+router.get("/getTokens", async (req, res) => {
+    const tokens = await UserService.getAllTokens()
+
+    res.json({
+        error: false,
+        message: "Tokens listados com sucesso!",
+        tokens
+    })
+})
+
 router.put("/update/:idUsuario", async (req, res) => {
     const { idUsuario } = req.params
     try {
