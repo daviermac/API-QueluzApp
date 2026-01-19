@@ -228,7 +228,7 @@ export async function createViagem(idCarro, idFuncionario, solicitacoes, paradas
         data: {
           local: parada.local,
           endereco: parada.endereco,
-          horario: parada.horario,
+          horario: new Date(`1970-01-01T${parada.horario}`),
           Viagem_idViagem: viagem.idViagem,
         }
       })
