@@ -3,6 +3,17 @@ import bcrypt from 'bcrypt'
  
 export async function getUserById() {}
 
+// VAI SAIR, SÓ PRA TESTE
+export async function getAllTokens() {
+    const tokens = await prisma.pushToken.findMany({
+        include: {
+            Usuario: true
+        }
+    })
+    
+    return tokens
+}
+
 export async function getUserByEmail(email) {
     if (!email) {
         throw new Error("Erro: E-mail não informado!")
