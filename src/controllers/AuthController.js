@@ -41,6 +41,7 @@ router.post("/forgot-password", async (req, res) => {
             link
         })
     } catch (error) {
+        console.error("Erro ao atualizar a senha", error)
         res.status(500).json({
             error: true,
             message: `Erro ao enviar link de recuperação: #${error.message}`
