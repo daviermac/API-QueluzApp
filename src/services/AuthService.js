@@ -45,18 +45,20 @@ export async function forgottenPassword(email) {
         throw new Error("Erro: nenhum usuário encontrado com este e-mail!")
     }
 
-    const token = crypto.randomBytes(32).toString('hex')
-    const expiraEm = new Date(Date.now() + 60 * 60 * 1000)
+    const rawToken = crypto.randomBytes(32).toString('hex')
+    const tokenHash = await bcrypt.hash(rawToken, 10)
+    const expiraEm = new Date(Date.now('pt-br') + 15 * 60 * 1000)
 
-    await prisma.passwordResetToken.create({
+    const tokenCriado = await prisma.passwordResetToken.create({
         data: {
-            token,
+            token: tokenHash,
             idUsuario: user.idUsuario,
             expiraEm
         }
     })
 
-    const link = `https://api.queluz.sp.gov.br/reset-password/${token}`
+    const linkDev = `http://192.168.2.98:8080/auth/reset-password/${tokenCriado.idToken}.${rawToken}`
+    const link = `https://api.queluz.sp.gov.br/auth/reset-password/${tokenCriado.idToken}.${rawToken}`
 
     const html = `
         <!DOCTYPE html>
@@ -122,9 +124,10 @@ export async function forgottenPassword(email) {
         </head>
         <body>
         <div class="container">
+            <img src="https://pmq-bucket-publico.s3.us-east-2.amazonaws.com/logo_queluz_gradiente.png" class="logo"/>
             <h1>Recuperação de senha</h1>
             <p>Você solicitou a recuperação da senha da sua conta. Clique no botão abaixo para redefinir sua senha. Este link é válido por 1 hora e só pode ser usado uma vez.</p>
-            <a href="${link}" class="button">Redefinir minha senha</a>
+            <a href="${linkDev}" class="button">Redefinir minha senha</a>
             <p style="margin-top: 20px; font-size: 12px; color: #555;">
             Se você não solicitou a recuperação de senha, recomendamos que troque sua senha.
             </p>
@@ -141,4 +144,53 @@ export async function forgottenPassword(email) {
     await sendEmail(email, "Recuperação de senha", null, html)
 
     return link
-}
+}       
+
+export async function resetPassword(token, password) {
+    const [id, tokenBody] = token.split(".")
+
+    const tokenExists = await prisma.passwordResetToken.findUnique({
+        where: {
+            idToken: id
+        }
+    })
+
+    if (!tokenExists) {
+        throw new Error("Erro: token inválido ou inexistente!")
+    }
+
+    const match = await bcrypt.compare(tokenBody, tokenExists.token)
+
+    // const tokenExists = await prisma.passwordResetToken.findFirst({
+    //     where: {
+    //         token,
+    //         jaUsado: false,
+    //         expiraEm: { gt: new Date() }
+    //     }
+    // })
+    
+    if (!match) {
+        throw new Error("Erro: token inválido ou inexistente!")
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const userUpdated = await prisma.usuario.update({
+        where: {
+            idUsuario: tokenExists.idUsuario
+        },
+        data: {
+            senha: hashedPassword
+        }
+    })
+
+    await prisma.passwordResetToken.update({
+        where: {
+            idToken: tokenExists.idToken
+        },
+        data: {
+            jaUsado: true
+        }
+    })
+
+    return userUpdated
+}       
