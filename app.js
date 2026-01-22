@@ -18,7 +18,6 @@ app.use((req, res, next) => {
 })
 app.use("/news", express.static("src/assets/news"))
 
-
 // Routing settings
 
 import AuthController from './src/controllers/AuthController.js'

@@ -5,7 +5,6 @@
 generator client {
   provider = "prisma-client-js"
   output   = "./generated"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
 } 
 
 datasource db {
@@ -116,6 +115,7 @@ model Usuario {
   Solicitacao Solicitacao[]
   SolicitacaoReparoIluminacao SolicitacaoReparoIluminacao[]
   PushToken         PushToken[]
+  PasswordResetToken  PasswordResetToken[]
 }
 
 model PushToken {
@@ -128,6 +128,16 @@ model PushToken {
   Usuario           Usuario @relation(fields: [usuarioId], references: [idUsuario], onDelete: Cascade) 
     
   @@index([usuarioId])
+}
+
+model PasswordResetToken {
+  idToken           String                @id @default(uuid())
+  token             String                @unique
+  expiraEm          DateTime
+  jaUsado           Boolean               @default(false)
+  idUsuario         String                
+
+  usuario           Usuario               @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
 }
 
 // Funcionário (ex.: motorista, administrativo etc.)

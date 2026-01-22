@@ -8,7 +8,7 @@
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 <body>
-    <form action="http://192.168.2.128/news/create" method="post" enctype="multipart/form-data" onsubmit="beforeSubmit()">
+    <form action="http://192.168.2.98:8080/news/create" method="post" enctype="multipart/form-data" onsubmit="beforeSubmit()">
         <input type="text" name="title" id="titulo" placeholder="Título"><br><br>
         <input type="text" name="author" id="autor" placeholder="Autor"><br><br>
         <input type="file" name="imagem-principal" id="imagem-principal"><br><br>
@@ -16,19 +16,19 @@
         <!-- Editor WYSIWYG -->
         <div name="editor" id="editor" style="height: 300px;"></div>
         <!-- Campo oculto que receberá o HTML do editor -->
-                
+        
         <label for="categoria">Categoria</label>
         <input type="hidden" name="body" id="body">
 
         <select name="category" id="category" required>
             <option value="" selected disabled>Selecione uma Categoria</option>
-
+        
             <option value="SAUDE">Saúde</option>
             <option value="EDUCACAO">Educação</option>
             <option value="INFRAESTRUTURA">Infraestrutura</option>
             <option value="CULTURA">Cultura</option>
             <option value="ESPORTE">Esporte</option>
-
+        
             <option value="ADMINISTRACAO_PUBLICA">Administração Pública</option>
             <option value="DESENVOLVIMENTO_ECONOMICO">Desenvolvimento Econômico</option>
             <option value="SERVICOS">Serviços</option>
@@ -45,7 +45,7 @@
             <option value="MEIO_AMBIENTE">Meio Ambiente</option>
         </select>
 
-
+        
         <br>
         <button type="submit">Enviar notícia</button>
     </form>
