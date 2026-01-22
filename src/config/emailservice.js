@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.kinghost.net',
-    port: 465,
+    port: 587,
     secure: false,   
     auth: {
         user: process.env.EMAIL_USER,
