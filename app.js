@@ -52,7 +52,7 @@ async function startServer() {
         await prisma.$connect()
         console.log("Banco de dados conectado com sucesso!")
 
-        app.listen(PORT, () => {
+        app.listen(PORT, "0.0.0.0", () => {
             console.log(`Servidor rodando em http://localhost:${PORT}`)
         })
     } catch (error) {
