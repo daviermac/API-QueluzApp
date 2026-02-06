@@ -1,6 +1,8 @@
 import express from 'express'
 import * as CourseService from '../services/CourseService.js'
+import { isAdminMiddleware } from '../middlewares/isAdminMiddleware.js'
 import upload from '../config/multer.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
@@ -61,7 +63,7 @@ router.get("/get/:idCurso", async (req, res) => {
     }
 })
 
-router.post("/create", upload.fields([{ name: "imagem_principal", maxCount: 1 }, { name: "imagem_capa", maxCount: 1 }]), async (req, res) => {
+router.post("/create", authMiddleware, isAdminMiddleware, upload.fields([{ name: "imagem_principal", maxCount: 1 }, { name: "imagem_capa", maxCount: 1 }]), async (req, res) => {
     const { nome, titulo, descricao, link_inscricao } = req.body
 
     const capaBuffer = req.files.imagem_capa?.[0].buffer
@@ -89,11 +91,11 @@ router.post("/create", upload.fields([{ name: "imagem_principal", maxCount: 1 },
     }
 })
 
-router.put("/edit/:idCurso", async (req, res) => {
+router.put("/edit/:idCurso", authMiddleware, isAdminMiddleware, async (req, res) => {
 
 })
 
-router.delete("/delete/:idCurso", async (req, res) => {
+router.delete("/delete/:idCurso", authMiddleware, isAdminMiddleware, async (req, res) => {
 
 })
 

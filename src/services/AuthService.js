@@ -28,8 +28,13 @@ export async function login(cpf, senha) {
     const SECRET = process.env.SECRET
 
     const token = jwt.sign({
-        user: user,
-    }, SECRET)
+        id: user.idUsuario,
+        role: "USER",
+    }, 
+    SECRET, 
+    {
+        expiresIn: '1D'
+    })
 
     return { user, token }
 }       

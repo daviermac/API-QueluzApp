@@ -1,9 +1,11 @@
 import express from 'express'
 import * as CarService from '../services/CarService.js'
+import { isAdminMiddleware } from '../middlewares/isAdminMiddleware.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
-router.get("/get", async (req, res) => {
+router.get("/get", authMiddleware, isAdminMiddleware, async (req, res) => {
     try {
         const carsList = await CarService.listCars()
 
@@ -21,7 +23,7 @@ router.get("/get", async (req, res) => {
     }
 })
 
-router.post("/create", async (req, res) => {
+router.post("/create", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { modelo, marca, cor, placa, capacidade, tipoCarro } = req.body
     
     try {

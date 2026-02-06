@@ -11,12 +11,14 @@ export default function authMiddleware(req, res, next) {
         })
     }
 
-    jwt.verify(token, process.env.SECRET, (err, user) => {
-        if (err) return res.status(401).json({
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET)
+        req.user = decoded
+        next()
+    } catch (error) {
+        return res.status(403).json({
             error: true,
-            message: "Token não recebido, ou inválido!"
-        }) 
-    })
-
-    next()
+            message: "Token inválido!"
+        })
+    }
 }   

@@ -2,10 +2,11 @@ import express from 'express'
 import upload from '../config/multer.js'
 import * as NewsService from '../services/NewsService.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
+import { isAdminMiddleware } from '../middlewares/isAdminMiddleware.js'
 
 const router = express.Router()
 
-router.post("/create", upload.single("imagem-principal"), async (req, res) => {
+router.post("/create", isAdminMiddleware, upload.single("imagem-principal"), async (req, res) => {
     try {
         const { title, body, category, author } = req.body
 
@@ -50,12 +51,6 @@ router.post("/create", upload.single("imagem-principal"), async (req, res) => {
 })
 
 router.get("/get", async (req, res) => {
-    const auth = req.headers.authorization
-
-    if (auth) {
-        console.log("Token recebido com sucesso!")
-    } 
-
     try {
         const news = await NewsService.listAllNews()
         return res.json({
@@ -106,7 +101,7 @@ router.get("/get/:idNoticia", async (req, res) => {
     }
 })
 
-router.patch("/edit/:idNoticia", upload.single("imagem-principal"), async (req, res) => {
+router.patch("/edit/:idNoticia", authMiddleware, isAdminMiddleware, upload.single("imagem-principal"), async (req, res) => {
     const { idNoticia } = req.params
     const { title, body, category, author } = req.body
     const fileBuffer = req.file.buffer
@@ -128,7 +123,7 @@ router.patch("/edit/:idNoticia", upload.single("imagem-principal"), async (req, 
     }
 })
 
-router.delete("/delete/:idNoticia", async (req, res) => {
+router.delete("/delete/:idNoticia", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { idNoticia } = req.params
     
     try {

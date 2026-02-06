@@ -1,5 +1,6 @@
 import express from 'express'
 import * as UserService from '../services/UserService.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
@@ -22,17 +23,17 @@ router.post("/create", async (req, res) => {
     }
 })
 
-router.get("/getTokens", async (req, res) => {
-    const tokens = await UserService.getAllTokens()
+// router.get("/getTokens", async (req, res) => {
+//     const tokens = await UserService.getAllTokens()
 
-    res.json({
-        error: false,
-        message: "Tokens listados com sucesso!",
-        tokens
-    })
-})
+//     res.json({
+//         error: false,
+//         message: "Tokens listados com sucesso!",
+//         tokens
+//     })
+// })
 
-router.put("/update/:idUsuario", async (req, res) => {
+router.put("/update/:idUsuario", authMiddleware, async (req, res) => {
     const { idUsuario } = req.params
     try {
         const { primeiroNome, sobrenome, cpf, telefone, email, cep, rua, numero, bairro, cidade} = req.body
@@ -52,7 +53,7 @@ router.put("/update/:idUsuario", async (req, res) => {
     }
 })
 
-router.delete("/delete/:idUsuario", async (req, res) => {
+router.delete("/delete/:idUsuario", authMiddleware, async (req, res) => {
     const { idUsuario } = req.params
 
     try {
@@ -72,7 +73,7 @@ router.delete("/delete/:idUsuario", async (req, res) => {
     }
 })
 
-router.post("/push-token", async (req, res) => {
+router.post("/push-token", authMiddleware, async (req, res) => {
     try {
         const { token, plataforma, usuarioId } = req.body;
 
