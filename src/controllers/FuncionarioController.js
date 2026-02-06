@@ -1,5 +1,7 @@
 import express from 'express'
+import { isAdminMiddleware } from '../middlewares/isAdminMiddleware.js'
 import * as FuncionarioServices from '../services/FuncionarioService.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
@@ -25,7 +27,7 @@ router.post("/login", async (req, res) => {
     }
 })
 
-router.get("/getFuncionarioByCpf/:cpf", async (req, res) => {
+router.get("/getFuncionarioByCpf/:cpf", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { cpf } = req.params
 
     try {
@@ -45,7 +47,7 @@ router.get("/getFuncionarioByCpf/:cpf", async (req, res) => {
     }
 })
 
-router.get("/getMotoristas", async (req, res) => {
+router.get("/getMotoristas", authMiddleware, isAdminMiddleware, async (req, res) => {
     try {
         const motoristas = await FuncionarioServices.getMotoristas()
 
@@ -63,7 +65,7 @@ router.get("/getMotoristas", async (req, res) => {
     }
 })
 
-router.get("/listFunctions", async (req, res) => {
+router.get("/listFunctions", authMiddleware, isAdminMiddleware, async (req, res) => {
     try {
         const functions = await FuncionarioServices.listFunctions()
 
@@ -81,7 +83,7 @@ router.get("/listFunctions", async (req, res) => {
     }
 })
 
-router.post("/register", async (req, res) => {
+router.post("/register", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao } = req.body
 
     try {
@@ -109,7 +111,7 @@ router.post("/register", async (req, res) => {
     }
 })
 
-router.post("/createFunction", async (req, res) => {
+router.post("/createFunction", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { nome } = req.body
 
     try {
@@ -117,7 +119,7 @@ router.post("/createFunction", async (req, res) => {
 
         return res.json({
             error: false,
-            message: "Funções listadas com sucesso!",
+            message: "Função criada com sucesso!",
             function: functionCreated
         })
     } catch (error) {

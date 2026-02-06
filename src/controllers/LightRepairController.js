@@ -1,11 +1,13 @@
 import * as LightRepairService from '../services/LightRepairService.js'
 import { getSignedUploadUrl } from '../config/S3.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 import express from 'express'
+import { isAdminMiddleware } from '../middlewares/isAdminMiddleware.js'
 const router = express.Router()
 
 const bucket_publico = process.env.AWS_PUBLIC_BUCKET
 
-router.post("/generate-url", async (req, res) => {
+router.post("/generate-url", authMiddleware, async (req, res) => {
     const { fileType, idUsuario } = req.body
 
     try {
@@ -28,7 +30,7 @@ router.post("/generate-url", async (req, res) => {
     }
 })
 
-router.post("/request", async (req, res) => {
+router.post("/request", authMiddleware, async (req, res) => {
     const { idUsuario, tipoProblema, descricao, enderecoTexto, referencia, latitude, longitude, imagem, primeiroNome, sobrenome, email, telefone } = req.body
 
     try {
@@ -48,7 +50,7 @@ router.post("/request", async (req, res) => {
     }
 })
 
-router.get("/getAllRequests", async (req, res) => {
+router.get("/getAllRequests", authMiddleware, isAdminMiddleware, async (req, res) => {
     try {
         const requests = await LightRepairService.getAllRequests()
         
@@ -66,7 +68,7 @@ router.get("/getAllRequests", async (req, res) => {
     }
 })
 
-router.get("/get/:requestId", async (req, res) => {
+router.get("/get/:requestId", authMiddleware, async (req, res) => {
     const { requestId } = req.params
 
     try {
@@ -86,7 +88,7 @@ router.get("/get/:requestId", async (req, res) => {
     }
 })
 
-router.get("/getByUser/:idUsuario", async (req, res) => {
+router.get("/getByUser/:idUsuario", authMiddleware, async (req, res) => {
     const { idUsuario } = req.params
 
     try {

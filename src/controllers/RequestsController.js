@@ -1,9 +1,10 @@
 import express from 'express'
 import * as RequestsService from '../services/RequestsService.js'
+import authMiddleware from '../middlewares/authMiddleware.js'
 
 const router = express.Router()
 
-router.get("/get/:idUsuario", async (req, res) => {
+router.get("/get/:idUsuario", authMiddleware, async (req, res) => {
     const { idUsuario } = req.params
 
     try {
@@ -23,7 +24,7 @@ router.get("/get/:idUsuario", async (req, res) => {
     }
 })
 
-router.put("/cancel/:requestId", async (req, res) => {
+router.put("/cancel/:requestId", authMiddleware, async (req, res) => {
     const { requestId } = req.params
     const { motive } = req.body
 

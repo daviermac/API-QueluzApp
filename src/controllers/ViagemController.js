@@ -2,12 +2,13 @@ import express from 'express'
 import * as ViagemService from '../services/ViagemService.js'
 import authMiddleware from '../middlewares/authMiddleware.js'
 import { getSignedUploadUrl } from '../config/S3.js'
+import { isAdminMiddleware } from '../middlewares/isAdminMiddleware.js'
 
 const bucket_privado = process.env.AWS_PRIVATE_BUCKET
 
 const router = express.Router()
 
-router.get("/getRequests", async (req, res) => {
+router.get("/getRequests", authMiddleware, isAdminMiddleware, async (req, res) => {
     try {
         const requests = await ViagemService.listViagemRequests()
 
@@ -25,7 +26,7 @@ router.get("/getRequests", async (req, res) => {
     }
 })
 
-router.get("/getRequests/:idUsuario", async (req, res) => {
+router.get("/getRequests/:idUsuario", authMiddleware, async (req, res) => {
     const { idUsuario } = req.params
 
     try {
@@ -45,7 +46,7 @@ router.get("/getRequests/:idUsuario", async (req, res) => {
     }
 }) 
 
-router.post("/generate-url", async (req, res) => {
+router.post("/generate-url", authMiddleware, async (req, res) => {
     const { fileType, idUsuario } = req.body
 
     try {
@@ -68,7 +69,7 @@ router.post("/generate-url", async (req, res) => {
     }
 })
 
-router.post("/request", async (req, res) => {
+router.post("/request", authMiddleware, async (req, res) => {
     try {   
         const { 
             idUsuario, first_name, surname, email, cellphone, address, local, local_city, 
@@ -109,7 +110,7 @@ router.post("/request", async (req, res) => {
     }
 })
 
-router.post("/create", async (req, res) => {
+router.post("/create", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { idCarro, idFuncionario, solicitacoes, paradas, dataPartida, horaPartida, localPartida, enderecoLocalPartida } = req.body
 
     try {
@@ -129,7 +130,7 @@ router.post("/create", async (req, res) => {
     }
 })
 
-router.put("/cancel/:idSolicitacao", async (req, res) => {
+router.put("/cancel/:idSolicitacao", authMiddleware, async (req, res) => {
     const { idSolicitacao } = req.params
     const { motivo } = req.body
 

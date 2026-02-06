@@ -10,7 +10,6 @@ export async function listCourses() {
         curso.imagem_principal = `${public_bucket_url}/${curso.imagem_principal}`
         curso.imagem_capa = `${public_bucket_url}/${curso.imagem_capa}`
     })
-    
 
     return cursos
 }

@@ -37,9 +37,14 @@ export async function loginFuncionario(matricula, senha) {
     })
 
     const token = jwt.sign(
-        {funcionario, functions}, 
+        {
+            id: funcionario.idFuncionario, 
+            role: "ADMIN"
+        }, 
         process.env.SECRET,
-        {expiresIn: '1D'}
+        {
+            expiresIn: '1D'
+        }
     )
 
     return { funcionario, token }
