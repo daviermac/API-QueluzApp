@@ -46,6 +46,44 @@ router.get("/getRequests/:idUsuario", authMiddleware, async (req, res) => {
     }
 }) 
 
+router.get("/getRequestById/:idRequisicao", authMiddleware, isAdminMiddleware, async (req, res) => {
+    const { idRequisicao } = req.params
+
+    try {
+        const request = await ViagemService.getRequestById(idRequisicao)
+
+        res.json({
+            error: false,
+            message: "Solicitação listada com sucesso!",
+            request
+        })
+    } catch (error) {
+        console.error(`Erro ao listar solicitação: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao listar solicitação: ${error.message}`
+        })
+    }
+})
+
+router.get("/getTripPlans", authMiddleware, isAdminMiddleware, async (req, res) => {
+    try {
+        const tripPlans = await ViagemService.getAllTripPlans()
+
+        res.json({
+            error: false,
+            message: "Planos de viagem listados com sucesso!",
+            tripPlans
+        })
+    } catch (error) {
+        console.error(`Erro ao listar planos de viagem: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao listar planos de viagem: ${error.message}`
+        })
+    }
+})
+
 router.post("/generate-url", authMiddleware, async (req, res) => {
     const { fileType, idUsuario } = req.body
 
@@ -130,12 +168,10 @@ router.post("/create", authMiddleware, isAdminMiddleware, async (req, res) => {
     }
 })
 
-router.put("/cancel/:idSolicitacao", authMiddleware, async (req, res) => {
+router.put("/cancel/:idSolicitacao", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { idSolicitacao } = req.params
     const { motivo } = req.body
-
-    console.log(motivo)
-
+    
     try {
         const requestUpdated = await ViagemService.cancelRequest(idSolicitacao, motivo)
 

@@ -81,6 +81,34 @@ export async function listViagemRequestsByUser(userId) {
   return requestsWithSignedUrls;
 }
 
+export async function getRequestById( idRequisicao ) {
+  if (!idRequisicao) {
+    throw new Error("Erro: ID não informado!")
+  }
+  
+  const request = await prisma.solicitacaoViagem.findUnique({
+    where: {
+      idSolicitacaoViagem: idRequisicao
+    }
+  })
+
+  if (!request) {
+    throw new Error("Erro: solicitação não encontrada com esse ID!")
+  }
+
+  return request
+}
+
+export async function getAllTripPlans() {
+  const requests = await prisma.viagem.findMany({
+    include: {
+      SolicitacaoViagem: true
+    }
+  })
+  
+  return requests
+} 
+
 export async function requestViagem( idUsuario, first_name, surname, email, cellphone, address, local, local_city, comprovante, data, hora, companion_cpf, companion_name, companion_phone, companion_email, companion_address ) {
   if (!first_name || !surname || !email || !cellphone || !address || !local || !local_city || !comprovante || !data || !hora) {
     throw new Error("Erro: Todos os dados são obrigatórios!");
@@ -259,15 +287,29 @@ export async function cancelRequest(idRequest, motivo) {
     throw new Error("Erro: O motivo do cancelamento é obrigatório!")
   }
 
-  const requestUpdated = await prisma.solicitacaoViagem.update({
-    where: {
-      idSolicitacaoViagem: idRequest
-    },
-    data: {
-      StatusSolicitacao: 'CANCELADA',
-      motivo_cancelamento: motivo
-    }
-  })
+  if (requestExists.statusSolicitacao === "CANCELADA") {
+    throw new Error("Erro: A solicitação em questão já foi cancelada anteriormente!")
+  }
 
-  return requestUpdated
+  return prisma.$transaction(async (tx) => {
+    const requestUpdated = await tx.solicitacao.update({
+      where: {
+        idSolicitacao: requestExists.Solicitacao_idSolicitacao
+      },
+      data: {
+        motivo_cancelamento: motivo,
+      }
+    })
+
+    const tripRequestUpdated = await tx.solicitacaoViagem.update({
+      where: {
+        Solicitacao_idSolicitacao: requestUpdated.idSolicitacao 
+      },
+      data: {
+        statusSolicitacao: 'CANCELADA'
+      }
+    })
+
+    return tripRequestUpdated
+  })
 }
