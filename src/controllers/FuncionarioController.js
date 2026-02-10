@@ -9,13 +9,13 @@ router.post("/login", async (req, res) => {
     const { matricula, senha } = req.body
 
     try {
-        const { funcionario, token, functions } = await FuncionarioServices.loginFuncionario(matricula, senha)
+        const { funcionario, token, funcoes } = await FuncionarioServices.loginFuncionario(matricula, senha)
         
         return res.json({
             error: false,
             message: "Login realizado com sucesso!",
             funcionario,
-            funcoes: functions,
+            funcoes,
             token
         })
     } catch (error) {

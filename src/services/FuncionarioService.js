@@ -27,7 +27,7 @@ export async function loginFuncionario(matricula, senha) {
         where: {
             Funcionario_idFuncionario: funcionario.idFuncionario
         },
-        select: {
+        include: {
             Funcao: {
                 select: {
                     nome: true
@@ -35,6 +35,8 @@ export async function loginFuncionario(matricula, senha) {
             }
         }
     })
+
+    const funcoes = functions.map(f => f.Funcao.nome)
 
     const token = jwt.sign(
         {
@@ -47,7 +49,7 @@ export async function loginFuncionario(matricula, senha) {
         }
     )
 
-    return { funcionario, token }
+    return { funcionario, funcoes, token }
 }
 
 export async function listFunctions() {
