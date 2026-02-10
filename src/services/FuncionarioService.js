@@ -58,6 +58,20 @@ export async function listFunctions() {
     return functionList
 }
 
+export async function listFuncionarios() {
+    const funcionarios = await prisma.funcionario.findMany({
+        include: {
+            FuncionarioFuncao: {
+                select: {
+                    Funcao: true,
+                }
+            }
+        }
+    })
+
+    return funcionarios
+}
+
 export async function listFuncionarioByCPF(cpf) {
     const funcionario = await prisma.funcionario.findFirst({
         where: {

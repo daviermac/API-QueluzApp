@@ -27,6 +27,24 @@ router.post("/login", async (req, res) => {
     }
 })
 
+router.get("/getFuncionarios", /*authMiddleware, isAdminMiddleware,*/ async (req, res) => {
+    try {
+        const funcionarios = await FuncionarioServices.listFuncionarios()
+
+        return res.json({
+            error: false,
+            message: "Funcionários listados com sucesso!",
+            funcionarios
+        })
+    } catch (error) {
+        console.error(`Erro ao listar funcionários: ${error.message}`)
+        res.status(400).json({
+            error: true,
+            message: `Erro ao listar funcionários: ${error.message}`
+        })
+    }
+})
+
 router.get("/getFuncionarioByCpf/:cpf", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { cpf } = req.params
 
@@ -86,6 +104,7 @@ router.get("/listFunctions", authMiddleware, isAdminMiddleware, async (req, res)
 router.post("/register", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao } = req.body
 
+        
     try {
         const funcionario = await FuncionarioServices.createFuncionario(
                 cpf,
