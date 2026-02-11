@@ -101,7 +101,7 @@ router.get("/listFunctions", authMiddleware, isAdminMiddleware, async (req, res)
     }
 })
 
-router.post("/register", /*authMiddleware, isAdminMiddleware, */async (req, res) => {
+router.post("/register", authMiddleware, isAdminMiddleware, async (req, res) => {
     const { cpf, primeiroNome, sobrenome, senha, matricula, idFuncao } = req.body
 
         
