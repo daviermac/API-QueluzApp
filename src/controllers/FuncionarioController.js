@@ -27,7 +27,7 @@ router.post("/login", async (req, res) => {
     }
 })
 
-router.get("/getFuncionarios", /*authMiddleware, isAdminMiddleware,*/ async (req, res) => {
+router.get("/getFuncionarios", authMiddleware, isAdminMiddleware, async (req, res) => {
     try {
         const funcionarios = await FuncionarioServices.listFuncionarios()
 
@@ -101,8 +101,8 @@ router.get("/listFunctions", authMiddleware, isAdminMiddleware, async (req, res)
     }
 })
 
-router.post("/register", authMiddleware, isAdminMiddleware, async (req, res) => {
-    const { cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao } = req.body
+router.post("/register", /*authMiddleware, isAdminMiddleware, */async (req, res) => {
+    const { cpf, primeiroNome, sobrenome, senha, matricula, idFuncao } = req.body
 
         
     try {
@@ -111,7 +111,6 @@ router.post("/register", authMiddleware, isAdminMiddleware, async (req, res) => 
                 primeiroNome,
                 sobrenome,
                 senha,
-                pis,      
                 matricula,
                 idFuncao
             )
