@@ -4,14 +4,14 @@ import bcrypt from 'bcrypt'
 async function main() {
     const nomeFuncao = "ADMIN"
 
-    const funcaoExists = await prisma.funcao.findFirst({
+    const funcao = await prisma.funcao.findFirst({
         where: {
             nome: nomeFuncao
         }
     })
-
-    if (!funcaoExists) {
-        const funcao = await prisma.funcao.create({
+    
+    if (!funcao) {
+        await prisma.funcao.create({
             data: {
                 nome: "ADMIN"
             }
@@ -35,10 +35,18 @@ async function main() {
                 primeiroNome: "Fabio",
                 senha: senhaHasheada,
                 sobrenome: "Santos",
-                cpf: cpf
+                cpf,
+                FuncionarioFuncao: {
+                    create: {
+                        Funcao_idFuncao: funcao.idFuncao
+                    }
+                }
             }
         })
+        
     }
+
+    
 }
 
 main()
