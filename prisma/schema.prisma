@@ -147,7 +147,6 @@ model Funcionario {
   primeiroNome      String
   sobrenome         String
   senha             String
-  pis               Int?                   @unique
   matricula         Int?                   @unique  
   createdAt         DateTime               @default(now())
 
