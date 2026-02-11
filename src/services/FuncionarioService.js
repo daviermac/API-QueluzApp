@@ -120,8 +120,8 @@ export async function getMotoristas() {
     return motoristas
 }
 
-export async function createFuncionario(cpf, primeiroNome, sobrenome, senha, pis, matricula, idFuncao) {
-    if (!cpf || !primeiroNome || !sobrenome || !pis || !senha || !matricula || !idFuncao) {
+export async function createFuncionario(cpf, primeiroNome, sobrenome, senha, matricula, idFuncao) {
+    if (!cpf || !primeiroNome || !sobrenome || !senha || !matricula || !idFuncao) {
         throw new Error("Erro: dados obrigatórios!")
     }
 
@@ -139,7 +139,7 @@ export async function createFuncionario(cpf, primeiroNome, sobrenome, senha, pis
         where: {
             Funcao_idFuncao: idFuncao,
             Funcionario: {
-                pis
+                matricula
             }
         }
     })
@@ -155,7 +155,6 @@ export async function createFuncionario(cpf, primeiroNome, sobrenome, senha, pis
                 primeiroNome,
                 sobrenome,
                 senha: await bcrypt.hash(senha, 10),
-                pis,
                 matricula,
             }
         })
