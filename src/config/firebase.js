@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 
 const serviceAccountPath = path.join(
   __dirname,
-  "../../queluz-app-firebase-adminsdk-fbsvc-b4bb26155b.json"
+  "../../queluz-app-firebase-adminsdk-fbsvc-64df26cc7d.json"
 );
 
 const serviceAccount = JSON.parse(
